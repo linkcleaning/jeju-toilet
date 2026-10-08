@@ -16,6 +16,7 @@ const state = {
   view: "list",
   query: "",
   filter: "all",
+  region: "all",
   toilets: [],
   meta: null,
   loadError: null,
@@ -83,6 +84,7 @@ function filtered() {
   return state.toilets
     .filter((x) => {
       if (q && ![x.name, x.address, x.lotAddress, x.dong, x.type, x.org, x.olle ? `올레 olle ${x.olle}` : ""].some((v) => String(v || "").toLowerCase().includes(q))) return false;
+      if (state.region !== "all" && x.provider !== state.region) return false;
       switch (state.filter) {
         case "openNow": return isOpenNow(x) === true;
         case "open24h": return x.open24h;
@@ -108,19 +110,32 @@ const dirUrls = (x) => {
 };
 
 // ---------- 소리 (귤랑이) ----------
-const voice = new Audio("jangsil.wav");
-voice.preload = "auto";
-function speakFallback() {
+// 똥글이 소리: 짧은 "뽁" 효과음 + 음성 "똥!" (ddong.mp3 녹음 파일을 넣으면 그걸 우선 재생)
+let customVoice = null;
+fetch("ddong.mp3", { method: "HEAD" }).then((r) => { if (r.ok) { customVoice = new Audio("ddong.mp3"); customVoice.preload = "auto"; } }).catch(() => {});
+let actx = null;
+function popSound() {
+  try {
+    actx = actx || new (window.AudioContext || window.webkitAudioContext)();
+    if (actx.state === "suspended") actx.resume();
+    const o = actx.createOscillator(), g = actx.createGain(), now = actx.currentTime;
+    o.type = "sine"; o.frequency.setValueAtTime(520, now); o.frequency.exponentialRampToValueAtTime(140, now + 0.16);
+    g.gain.setValueAtTime(0.0001, now); g.gain.exponentialRampToValueAtTime(0.35, now + 0.01); g.gain.exponentialRampToValueAtTime(0.0001, now + 0.18);
+    o.connect(g).connect(actx.destination); o.start(now); o.stop(now + 0.2);
+  } catch {}
+}
+function speakDdong() {
   if (!("speechSynthesis" in window)) return;
   speechSynthesis.cancel();
-  const u = new SpeechSynthesisUtterance("장실!");
-  u.lang = "ko-KR"; u.pitch = 1.75; u.rate = 1.25;
+  const u = new SpeechSynthesisUtterance("똥!");
+  u.lang = "ko-KR"; u.pitch = 1.6; u.rate = 1.2;
   const v = speechSynthesis.getVoices().find((v) => v.lang.toLowerCase().startsWith("ko"));
   if (v) u.voice = v;
   speechSynthesis.speak(u);
 }
 function playMascot(el) {
-  try { voice.pause(); voice.currentTime = 0; voice.play().catch(speakFallback); } catch { speakFallback(); }
+  if (customVoice) { try { customVoice.pause(); customVoice.currentTime = 0; customVoice.play().catch(() => { popSound(); speakDdong(); }); } catch { popSound(); speakDdong(); } }
+  else { popSound(); speakDdong(); }
   $("#live").textContent = t("mascot.sound");
   document.querySelectorAll(".mascot-btn, .mascot-round").forEach((b) => b.classList.add("speaking"));
   document.querySelectorAll(".bubble strong").forEach((s) => (s.textContent = t("mascot.sound")));
@@ -167,9 +182,14 @@ function fillIcons(root = document) {
   root.querySelectorAll("[data-icon]").forEach((el) => { el.outerHTML = icon(el.dataset.icon); });
 }
 
-const FILTERS = [["all", "sparkles"], ["openNow", "clock"], ["open24h", "clock"], ["wheelchair", "wheelchair"], ["diaper", "baby"], ["emergency", "bell"], ["olle", "feet"]];
+const REGIONS = [["제주시", "jejuCity"], ["서귀포시", "seogwipo"]];
+const FILTERS = [["openNow", "clock"], ["open24h", "clock"], ["wheelchair", "wheelchair"], ["diaper", "baby"], ["emergency", "bell"], ["olle", "feet"]];
 function renderFilters() {
-  $("#filters").innerHTML = FILTERS.map(([k, ic]) => `<button type="button" class="chip" data-filter="${k}" aria-pressed="${state.filter === k}">${icon(ic)}${esc(t(`filters.${k}`))}</button>`).join("");
+  const allOn = state.filter === "all" && state.region === "all";
+  $("#filters").innerHTML = `<button type="button" class="chip" data-filter="all" aria-pressed="${allOn}">${icon("sparkles")}${esc(t("filters.all"))}</button>`
+    + REGIONS.map(([v, k]) => `<button type="button" class="chip chip-region" data-region="${v}" aria-pressed="${state.region === v}">${icon("pin")}${esc(t(`filters.${k}`))}</button>`).join("")
+    + `<span class="chip-sep" aria-hidden="true"></span>`
+    + FILTERS.map(([k, ic]) => `<button type="button" class="chip" data-filter="${k}" aria-pressed="${state.filter === k}">${icon(ic)}${esc(t(`filters.${k}`))}</button>`).join("");
 }
 function renderNav() {
   const items = [["list", "house"], ["map", "map"], ["guide", "info"]];
@@ -473,7 +493,7 @@ function setView(v, keepSelection = false) {
 
 // ---------- 이벤트 ----------
 document.addEventListener("click", (e) => {
-  const b = e.target.closest("[data-open],[data-showmap],[data-act],[data-filter],[data-view],[data-rate]");
+  const b = e.target.closest("[data-open],[data-showmap],[data-act],[data-filter],[data-region],[data-view],[data-rate]");
   if (!b) return;
   if (b.dataset.open) { select(b.dataset.open); return; }
   if (b.dataset.showmap) {
@@ -482,7 +502,8 @@ document.addEventListener("click", (e) => {
     if (x && map) setTimeout(() => focusOnMap(x), 60);
     return;
   }
-  if (b.dataset.filter) { state.filter = b.dataset.filter; state.shown = PAGE; if (state.selectedId && !filtered().some((x) => x.id === state.selectedId)) state.selectedId = null; render(); return; }
+  if (b.dataset.region) { state.region = state.region === b.dataset.region ? "all" : b.dataset.region; state.shown = PAGE; if (state.selectedId && !filtered().some((x) => x.id === state.selectedId)) state.selectedId = null; render(); return; }
+  if (b.dataset.filter) { if (b.dataset.filter === "all") state.region = "all"; state.filter = (b.dataset.filter !== "all" && state.filter === b.dataset.filter) ? "all" : b.dataset.filter; state.shown = PAGE; if (state.selectedId && !filtered().some((x) => x.id === state.selectedId)) state.selectedId = null; render(); return; }
   if (b.dataset.view) { setView(b.dataset.view); return; }
   if (b.dataset.rate) {
     state.ratings[state.selectedId] = Number(b.dataset.rate); store.set(LS.ratings, state.ratings);

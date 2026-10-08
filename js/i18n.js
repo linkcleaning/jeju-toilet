@@ -1,5 +1,5 @@
 // 제주 공중화장실 — 다국어 사전 (KO / EN / ZH / JA)
-export const LANG_LABELS = { ko: "한국어", en: "EN", zh: "中文", ja: "日本語" };
+export const LANG_LABELS = { ko: "🇰🇷 한국어", en: "🇺🇸 EN", zh: "🇨🇳 中文", ja: "🇯🇵 日本語" };
 export const HTML_LANG = { ko: "ko-KR", en: "en-US", zh: "zh-CN", ja: "ja-JP" };
 
 export const DICT = {
@@ -8,9 +8,9 @@ export const DICT = {
     common: { close: "닫기", available: "있음", unavailable: "없음", unknown: "정보 없음", km: "km", meters: "m", official: "제주 공식 데이터", more: "더 보기" },
     header: { language: "언어 선택", skip: "지도와 검색으로 바로가기" },
     search: { label: "화장실 검색", placeholder: "장소, 화장실 이름, 주소 검색", results: "곳", noResults: "조건에 맞는 화장실이 없어요", clear: "검색 지우기" },
-    filters: { label: "편의시설 필터", all: "전체", openNow: "지금 이용", open24h: "24시간", wheelchair: "휠체어", diaper: "기저귀 교환대", emergency: "비상벨", olle: "올레길" },
+    filters: { label: "편의시설 필터", all: "전체", openNow: "지금 이용", open24h: "24시간", wheelchair: "휠체어", diaper: "기저귀 교환대", emergency: "비상벨", olle: "올레길", jejuCity: "제주시", seogwipo: "서귀포시" },
     map: { label: "제주 공중화장실 지도", locate: "내 위치로 이동", locationFound: "현재 위치를 찾았어요", locationFallback: "위치를 확인할 수 없어 제주시청을 기준으로 보여드려요", toiletMarker: "화장실 위치", officialCount: "곳 · 공식 데이터", offline: "지도를 불러오지 못해 간단 지도로 보여드려요" },
-    mascot: { name: "귤랑이", prompt: "톡 누르면 바로 장실!", sound: "장실!", aria: "귤랑이 음성 재생: 장실!" },
+    mascot: { name: "똥글이", prompt: "톡 누르면 바로 똥!", sound: "똥!", aria: "똥글이 음성 재생: 똥!" },
     detail: { distance: "현재 위치에서", walk: "도보", drive: "차량", minutes: "분", estimate: "예상", hours: "운영시간", open: "이용 가능", closed: "운영 종료", unknownStatus: "운영 확인 필요", limited: "시간제 운영", maintenance: "점검·운영중지", microTip: "찾아가는 팁", tipTemplate: "{type} 시설 안에 있어요. 현장 화장실 안내 표지를 확인하세요.", facilities: "접근성·시설", safety: "안전·보안", tourism: "제주 여행 편의", cleanliness: "청결 만족도", noReviews: "아직 평가가 없어요", reviews: "개 후기", yourRating: "나의 별점", rate: "점 주기", ratingSaved: "별점이 저장되었어요", reviewPlaceholder: "예: 깨끗하고 휴지가 넉넉해요", submitReview: "후기 등록", reviewSaved: "한줄 후기가 저장되었어요", reviewRequired: "별점과 한줄 후기를 입력해 주세요", reviewLocal: "후기는 이 기기에만 저장돼요", directions: "길찾기", google: "Google 지도", kakao: "카카오맵", naver: "네이버지도", updated: "데이터 기준", report: "정보 수정 제안", reportMessage: "현장과 공식 정보가 다르면 관리기관에 알려 주세요.", geocoded: "위치는 주소로 찾은 좌표예요. 현장과 조금 다를 수 있어요." },
     facilities: { wheelchair: "휠체어·장애인 화장실", genderSeparated: "남녀 분리", diaper: "기저귀 교환대", toddlerSeat: "어린이용 변기", toiletPaper: "화장지", bidet: "비데", emergency: "비상벨", emergencyLinked: "긴급기관 연계", illegalCamera: "불법촬영 점검", safetyMirror: "안심거울", cctv: "입구 CCTV", open24h: "24시간 운영", olle: "제주올레", parking: "주차장", ev: "전기차 충전" },
     nav: { map: "지도", list: "홈", guide: "이용 안내" },
@@ -23,9 +23,9 @@ export const DICT = {
     common: { close: "Close", available: "Available", unavailable: "Not available", unknown: "No data", km: "km", meters: "m", official: "Official Jeju data", more: "Show more" },
     header: { language: "Select language", skip: "Skip to map and search" },
     search: { label: "Search toilets", placeholder: "Search place, toilet, or address", results: "places", noResults: "No toilets match these filters", clear: "Clear search" },
-    filters: { label: "Facility filters", all: "All", openNow: "Open now", open24h: "24 hours", wheelchair: "Wheelchair", diaper: "Baby change", emergency: "Emergency bell", olle: "Olle Trail" },
+    filters: { label: "Facility filters", all: "All", openNow: "Open now", open24h: "24 hours", wheelchair: "Wheelchair", diaper: "Baby change", emergency: "Emergency bell", olle: "Olle Trail", jejuCity: "Jeju City", seogwipo: "Seogwipo" },
     map: { label: "Jeju public toilet map", locate: "Go to my location", locationFound: "Your location was found", locationFallback: "Location unavailable. Showing distances from Jeju City Hall", toiletMarker: "Toilet location", officialCount: "official records", offline: "Map tiles unavailable — showing a simple map" },
-    mascot: { name: "Gyul-rang", prompt: "Tap for instant Jang-sil!", sound: "Jang-sil!", aria: "Play Gyul-rang's voice: Jang-sil!" },
+    mascot: { name: "Ddonggeul", prompt: "Tap for an instant Ddong!", sound: "Ddong!", aria: "Play Ddonggeul's voice: Ddong!" },
     detail: { distance: "from your location", walk: "walk", drive: "drive", minutes: " min", estimate: "est.", hours: "Opening hours", open: "Open now", closed: "Closed", unknownStatus: "Check hours", limited: "Limited hours", maintenance: "Maintenance/closed", microTip: "Location tip", tipTemplate: "Located at a facility of type: {type}. Look for restroom signs on site.", facilities: "Access & facilities", safety: "Safety & security", tourism: "Jeju travel", cleanliness: "Cleanliness rating", noReviews: "No ratings yet", reviews: "reviews", yourRating: "Your rating", rate: "stars", ratingSaved: "Your rating was saved", reviewPlaceholder: "e.g. Clean and well-supplied", submitReview: "Post review", reviewSaved: "Your one-line review was saved", reviewRequired: "Add a star rating and one-line review", reviewLocal: "Reviews are saved on this device only", directions: "Directions", google: "Google Maps", kakao: "Kakao Map", naver: "Naver Map", updated: "Data date", report: "Suggest an update", reportMessage: "Contact the managing organization if the official record differs from the site.", geocoded: "Location estimated from the address and may be slightly off." },
     facilities: { wheelchair: "Wheelchair/disabled toilet", genderSeparated: "Male/female separated", diaper: "Diaper station", toddlerSeat: "Child toilet", toiletPaper: "Toilet paper", bidet: "Bidet", emergency: "Emergency bell", emergencyLinked: "Emergency-system link", illegalCamera: "Hidden-camera checked", safetyMirror: "Safety mirror", cctv: "Entrance CCTV", open24h: "Open 24/7", olle: "Jeju Olle", parking: "Parking", ev: "EV charging" },
     nav: { map: "Map", list: "Home", guide: "Guide" },
@@ -38,9 +38,9 @@ export const DICT = {
     common: { close: "关闭", available: "有", unavailable: "无", unknown: "暂无数据", km: "公里", meters: "米", official: "济州官方数据", more: "查看更多" },
     header: { language: "选择语言", skip: "直接前往地图和搜索" },
     search: { label: "搜索厕所", placeholder: "搜索地点、厕所名称或地址", results: "处", noResults: "没有符合条件的厕所", clear: "清除搜索" },
-    filters: { label: "设施筛选", all: "全部", openNow: "正在开放", open24h: "24小时", wheelchair: "轮椅通行", diaper: "尿布台", emergency: "紧急铃", olle: "偶来小路" },
+    filters: { label: "设施筛选", all: "全部", openNow: "正在开放", open24h: "24小时", wheelchair: "轮椅通行", diaper: "尿布台", emergency: "紧急铃", olle: "偶来小路", jejuCity: "济州市", seogwipo: "西归浦市" },
     map: { label: "济州公共厕所地图", locate: "前往我的位置", locationFound: "已找到您的位置", locationFallback: "无法获取位置，距离以济州市厅为基准", toiletMarker: "厕所位置", officialCount: "条官方数据", offline: "无法加载地图，显示简易地图" },
-    mascot: { name: "橘朗", prompt: "点击立即播放 Jang-sil!", sound: "Jang-sil!", aria: "播放橘朗语音 Jang-sil" },
+    mascot: { name: "便便君", prompt: "点一下就“咚”！", sound: "Ddong!", aria: "播放便便君语音 Ddong" },
     detail: { distance: "距您的位置", walk: "步行", drive: "驾车", minutes: "分钟", estimate: "预计", hours: "开放时间", open: "正在开放", closed: "已关闭", unknownStatus: "请确认时间", limited: "限时开放", maintenance: "维护/暂停", microTip: "位置提示", tipTemplate: "设施类型：{type}。请留意现场厕所指示牌。", facilities: "无障碍与设施", safety: "安全与安保", tourism: "济州旅行", cleanliness: "清洁评分", noReviews: "暂无评分", reviews: "条评价", yourRating: "您的评分", rate: "星", ratingSaved: "评分已保存", reviewPlaceholder: "例如：干净且用品充足", submitReview: "提交评价", reviewSaved: "一句话评价已保存", reviewRequired: "请选择星级并填写一句话评价", reviewLocal: "评价仅保存在本设备", directions: "路线", google: "Google 地图", kakao: "Kakao 地图", naver: "Naver 地图", updated: "数据日期", report: "建议更新信息", reportMessage: "若现场与官方记录不同，请联系管理机构。", geocoded: "位置根据地址推算，可能略有偏差。" },
     facilities: { wheelchair: "轮椅/无障碍厕所", genderSeparated: "男女分开", diaper: "尿布台", toddlerSeat: "儿童坐便器", toiletPaper: "卫生纸", bidet: "智能马桶", emergency: "紧急呼叫铃", emergencyLinked: "紧急系统联动", illegalCamera: "偷拍设备检查", safetyMirror: "安全镜", cctv: "入口监控", open24h: "24小时开放", olle: "济州偶来", parking: "停车场", ev: "电动车充电" },
     nav: { map: "地图", list: "首页", guide: "使用指南" },
@@ -53,9 +53,9 @@ export const DICT = {
     common: { close: "閉じる", available: "あり", unavailable: "なし", unknown: "情報なし", km: "km", meters: "m", official: "済州公式データ", more: "もっと見る" },
     header: { language: "言語を選択", skip: "地図と検索へ移動" },
     search: { label: "トイレを検索", placeholder: "場所・トイレ名・住所を検索", results: "件", noResults: "条件に合うトイレがありません", clear: "検索をクリア" },
-    filters: { label: "設備フィルター", all: "すべて", openNow: "営業中", open24h: "24時間", wheelchair: "車いす", diaper: "おむつ交換台", emergency: "非常ベル", olle: "オルレ" },
+    filters: { label: "設備フィルター", all: "すべて", openNow: "営業中", open24h: "24時間", wheelchair: "車いす", diaper: "おむつ交換台", emergency: "非常ベル", olle: "オルレ", jejuCity: "済州市", seogwipo: "西帰浦市" },
     map: { label: "済州公衆トイレ地図", locate: "現在地へ移動", locationFound: "現在地を確認しました", locationFallback: "位置情報を取得できないため、済州市庁からの距離を表示します", toiletMarker: "トイレの場所", officialCount: "件の公式データ", offline: "地図を読み込めないため簡易地図を表示します" },
-    mascot: { name: "ギュルラン", prompt: "タップですぐチャンシル！", sound: "チャンシル！", aria: "ギュルランの音声を再生：チャンシル！" },
+    mascot: { name: "トングリ", prompt: "タップですぐトン！", sound: "トン！", aria: "トングリの音声を再生：トン！" },
     detail: { distance: "現在地から", walk: "徒歩", drive: "車", minutes: "分", estimate: "目安", hours: "営業時間", open: "営業中", closed: "営業時間外", unknownStatus: "時間を要確認", limited: "時間限定", maintenance: "点検・休止", microTip: "場所のヒント", tipTemplate: "施設の種類：{type}。現地のトイレ案内表示をご確認ください。", facilities: "バリアフリー・設備", safety: "安全・防犯", tourism: "済州旅行", cleanliness: "清潔度評価", noReviews: "まだ評価がありません", reviews: "件の口コミ", yourRating: "あなたの評価", rate: "つ星", ratingSaved: "評価を保存しました", reviewPlaceholder: "例：清潔で備品も十分です", submitReview: "口コミ投稿", reviewSaved: "ひとこと口コミを保存しました", reviewRequired: "星評価とひとことを入力してください", reviewLocal: "口コミはこの端末にのみ保存されます", directions: "経路案内", google: "Google マップ", kakao: "Kakaoマップ", naver: "NAVERマップ", updated: "データ基準日", report: "情報の修正を提案", reportMessage: "現地と公式情報が異なる場合は管理機関へご連絡ください。", geocoded: "位置は住所から推定しています。多少ずれる場合があります。" },
     facilities: { wheelchair: "車いす・障害者トイレ", genderSeparated: "男女別", diaper: "おむつ交換台", toddlerSeat: "子ども用便器", toiletPaper: "トイレットペーパー", bidet: "温水洗浄便座", emergency: "非常ベル", emergencyLinked: "緊急システム連携", illegalCamera: "盗撮点検", safetyMirror: "安心ミラー", cctv: "入口CCTV", open24h: "24時間営業", olle: "済州オルレ", parking: "駐車場", ev: "EV充電" },
     nav: { map: "地図", list: "ホーム", guide: "利用案内" },

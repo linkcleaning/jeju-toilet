@@ -380,3 +380,6 @@ main { position: relative; flex: 1; min-height: 0; outline: none; }
 .loc-st.locating { background: rgba(255,209,139,.18); color: #FFD9A0; }
 .loc-st.fallback { background: rgba(255,154,115,.2); color: #FFB59A; }
 .pills { gap: 6px; }
+.chip-sep { flex-shrink: 0; width: 1px; height: 24px; align-self: center; background: #D3DEDC; margin: 0 2px; }
+.chip-region[aria-pressed="true"] { background: var(--hallabong); border-color: var(--hallabong); box-shadow: 0 7px 14px rgba(255,138,52,.25); }
+.chip-region[aria-pressed="true"] .ic { color: #fff; }

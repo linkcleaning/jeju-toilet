@@ -42,22 +42,24 @@ export function icon(name, cls = "ic", extra = "") {
 
 // 귤랑이: 한라봉 모양 오리지널 마스코트 (SVG)
 let mascotSeq = 0;
+// 똥글이: 세 단 소용돌이 똥 모양 오리지널 마스코트
 export const mascotSvg = () => { const k = `m${++mascotSeq}`; return `<svg viewBox="0 0 120 120" aria-hidden="true" class="mascot-svg">
   <defs>
-    <radialGradient id="${k}b" cx="38%" cy="35%" r="70%"><stop offset="0" stop-color="#FFC27A"/><stop offset=".55" stop-color="#FF9A3D"/><stop offset="1" stop-color="#F0741C"/></radialGradient>
-    <radialGradient id="${k}t" cx="40%" cy="30%" r="80%"><stop offset="0" stop-color="#FFB869"/><stop offset="1" stop-color="#F27E25"/></radialGradient>
+    <linearGradient id="${k}a" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#A86B3C"/><stop offset="1" stop-color="#7A4A26"/></linearGradient>
+    <linearGradient id="${k}b" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#B97A47"/><stop offset="1" stop-color="#8B5630"/></linearGradient>
+    <linearGradient id="${k}c" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#C98B55"/><stop offset="1" stop-color="#9A6238"/></linearGradient>
   </defs>
-  <ellipse cx="60" cy="112" rx="30" ry="5" fill="#172A3A" opacity=".12"/>
-  <path d="M60 30c-30 0-44 20-44 42 0 22 18 38 44 38s44-16 44-38c0-22-14-42-44-42Z" fill="url(#${k}b)"/>
-  <path d="M60 14c-10 0-16 8-16 17 0 5 6 8 16 8s16-3 16-8c0-9-6-17-16-17Z" fill="url(#${k}t)"/>
-  <path d="M60 15c0-6 2-9 5-11" stroke="#5B7B3A" stroke-width="3.2" stroke-linecap="round" fill="none"/>
-  <path d="M64 8c8-6 19-5 24 0-6 6-17 7-24 0Z" fill="#4FA35A"/>
-  <path d="M66 8c6-2 13-2 19 0" stroke="#2F7A3F" stroke-width="1.4" fill="none" stroke-linecap="round"/>
-  <g fill="#E8691A" opacity=".35"><circle cx="35" cy="56" r="1.6"/><circle cx="84" cy="52" r="1.6"/><circle cx="90" cy="76" r="1.6"/><circle cx="30" cy="80" r="1.6"/><circle cx="56" cy="44" r="1.4"/></g>
-  <ellipse cx="44" cy="74" rx="5" ry="6.4" fill="#172A3A"/><ellipse cx="76" cy="74" rx="5" ry="6.4" fill="#172A3A"/>
-  <circle cx="45.8" cy="71.6" r="1.9" fill="#fff"/><circle cx="77.8" cy="71.6" r="1.9" fill="#fff"/>
-  <ellipse cx="34" cy="86" rx="7" ry="4" fill="#FF6B6B" opacity=".45"/><ellipse cx="86" cy="86" rx="7" ry="4" fill="#FF6B6B" opacity=".45"/>
-  <path d="M52 86c4 6 12 6 16 0" stroke="#172A3A" stroke-width="3.2" stroke-linecap="round" fill="none"/>
+  <ellipse cx="60" cy="112" rx="40" ry="5" fill="#172A3A" opacity=".12"/>
+  <path d="M14 96c0-14 12-22 24-22h44c12 0 24 8 24 22 0 9-7 14-16 14H30c-9 0-16-5-16-14Z" fill="url(#${k}a)"/>
+  <path d="M26 72c0-11 9-18 19-18h30c10 0 19 7 19 18 0 7-5 11-12 11H38c-7 0-12-4-12-11Z" fill="url(#${k}b)"/>
+  <path d="M38 52c0-9 7-15 15-15h6c4-1 6-6 4-12 9 2 15 9 15 17 0 7 0 10-1 12-1 5-5 8-10 8H48c-6 0-10-4-10-10Z" fill="url(#${k}c)"/>
+  <path d="M63 25c3-5 2-10-1-14" stroke="#9A6238" stroke-width="4" stroke-linecap="round" fill="none"/>
+  <path d="M48 44c3-3 7-4 11-3M36 63c4-3 9-4 14-3M24 87c5-4 12-5 18-4" stroke="#fff" stroke-opacity=".28" stroke-width="3.5" stroke-linecap="round" fill="none"/>
+  <ellipse cx="46" cy="86" rx="5.2" ry="6.6" fill="#fff"/><ellipse cx="74" cy="86" rx="5.2" ry="6.6" fill="#fff"/>
+  <ellipse cx="47" cy="87.5" rx="3.4" ry="4.4" fill="#2A1A10"/><ellipse cx="75" cy="87.5" rx="3.4" ry="4.4" fill="#2A1A10"/>
+  <circle cx="48.3" cy="85.6" r="1.3" fill="#fff"/><circle cx="76.3" cy="85.6" r="1.3" fill="#fff"/>
+  <ellipse cx="35" cy="97" rx="6" ry="3.4" fill="#FF7A7A" opacity=".55"/><ellipse cx="85" cy="97" rx="6" ry="3.4" fill="#FF7A7A" opacity=".55"/>
+  <path d="M53 97c4 5 10 5 14 0" stroke="#2A1A10" stroke-width="3.2" stroke-linecap="round" fill="none"/>
 </svg>`; };
 
-export const PIN_HTML = `<div class="pin"><div class="pin-body"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="13.5" r="7.5" fill="#FFB25E"/><path d="M12 6.5c-2 0-3 1.4-3 2.7 0 .8 1.4 1.2 3 1.2s3-.4 3-1.2c0-1.3-1-2.7-3-2.7Z" fill="#FFC27A"/><path d="M12.6 6.8c1.6-1.4 3.6-1.2 4.4-.2-1.2 1.2-3.2 1.3-4.4.2Z" fill="#4FA35A"/><circle cx="9.6" cy="14" r="1" fill="#172A3A"/><circle cx="14.4" cy="14" r="1" fill="#172A3A"/><path d="M10.6 16.4c.8.8 2 .8 2.8 0" stroke="#172A3A" stroke-width=".9" fill="none" stroke-linecap="round"/></svg></div><span class="pin-tag">WC</span></div>`;
+export const PIN_HTML = `<div class="pin"><div class="pin-body"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 18.2c0-2.6 2.2-4 4.4-4h7.2c2.2 0 4.4 1.4 4.4 4 0 1.6-1.3 2.6-3 2.6H7c-1.7 0-3-1-3-2.6Z" fill="#8B5630"/><path d="M6.3 13.8c0-2 1.6-3.2 3.4-3.2h4.6c1.8 0 3.4 1.2 3.4 3.2 0 1.3-.9 2-2.2 2H8.5c-1.3 0-2.2-.7-2.2-2Z" fill="#A86B3C"/><path d="M8.6 10c0-1.6 1.3-2.7 2.7-2.7h.8c.8-.2 1.1-1.1.7-2.1 1.6.4 2.6 1.6 2.6 3 0 1.2-.4 2.4-1.9 2.4h-3c-1.1 0-1.9-.4-1.9-.6Z" fill="#C98B55"/><circle cx="9.8" cy="17.2" r=".95" fill="#2A1A10"/><circle cx="14.2" cy="17.2" r=".95" fill="#2A1A10"/><path d="M10.9 19.1c.6.6 1.6.6 2.2 0" stroke="#2A1A10" stroke-width=".8" fill="none" stroke-linecap="round"/></svg></div><span class="pin-tag">WC</span></div>`;
