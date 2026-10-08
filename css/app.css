@@ -454,3 +454,8 @@ main { position: relative; flex: 1; min-height: 0; outline: none; }
 .chip-sm { height: 34px; padding: 0 12px; font-size: 13px; }
 .chip-sm .ic { width: 14px; height: 14px; }
 .chip-row { padding: 2px 2px 6px; margin: -2px -2px -6px; }
+/* iOS 자동 확대 방지: 입력칸 글씨 16px 이상 */
+input, select, textarea { font-size: 16px !important; }
+.r-form input { height: 46px; }
+.lang select { padding: 0 22px 0 10px; height: 40px; }
+html, body { overflow-x: hidden; -webkit-text-size-adjust: 100%; }
