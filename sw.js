@@ -1,5 +1,5 @@
 // 오프라인용 서비스워커: 앱 화면은 캐시 우선, 데이터는 네트워크 우선
-const CACHE = "jeju-toilet-v9";
+const CACHE = "jeju-toilet-v10";
 const SHELL = ["./", "index.html", "css/app.css", "fonts/ddong-logo.woff", "js/app.js", "js/i18n.js", "js/icons.js", "js/sos.js", "manifest.webmanifest", "icons/icon.svg", "icons/icon-192.png", "icons/icon-512.png"];
 self.addEventListener("install", (e) => { e.waitUntil(caches.open(CACHE).then((c) => c.addAll(SHELL)).then(() => self.skipWaiting())); });
 self.addEventListener("activate", (e) => { e.waitUntil(caches.keys().then((ks) => Promise.all(ks.filter((k) => k !== CACHE).map((k) => caches.delete(k)))).then(() => self.clients.claim())); });

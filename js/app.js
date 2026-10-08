@@ -187,10 +187,11 @@ const REGIONS = [["제주시", "jejuCity"], ["서귀포시", "seogwipo"]];
 const FILTERS = [["openNow", "clock"], ["open24h", "clock"], ["wheelchair", "wheelchair"], ["diaper", "baby"], ["emergency", "bell"], ["olle", "feet"]];
 function renderFilters() {
   const allOn = state.filter === "all" && state.region === "all";
-  $("#filters").innerHTML = `<button type="button" class="chip" data-filter="all" aria-pressed="${allOn}">${icon("sparkles")}${esc(t("filters.all"))}</button>`
+  $("#filters").innerHTML = `<div class="chip-row no-scrollbar"><button type="button" class="chip" data-filter="all" aria-pressed="${allOn}">${icon("sparkles")}${esc(t("filters.all"))}</button>`
     + REGIONS.map(([v, k]) => `<button type="button" class="chip chip-region" data-region="${v}" aria-pressed="${state.region === v}">${icon("pin")}${esc(t(`filters.${k}`))}</button>`).join("")
-    + `<span class="chip-sep" aria-hidden="true"></span>`
-    + FILTERS.map(([k, ic]) => `<button type="button" class="chip" data-filter="${k}" aria-pressed="${state.filter === k}">${icon(ic)}${esc(t(`filters.${k}`))}</button>`).join("");
+    + `</div><div class="chip-row no-scrollbar">`
+    + FILTERS.map(([k, ic]) => `<button type="button" class="chip chip-sm" data-filter="${k}" aria-pressed="${state.filter === k}">${icon(ic)}${esc(t(`filters.${k}`))}</button>`).join("")
+    + `</div>`;
 }
 function renderNav() {
   const items = [["list", "house"], ["map", "map"], ["sos", "siren"], ["guide", "info"]];
