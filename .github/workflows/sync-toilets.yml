@@ -11,6 +11,7 @@ permissions:
 jobs:
   sync:
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -19,10 +20,11 @@ jobs:
       - name: 공공데이터 받아서 data/toilets.json 생성
         env:
           JEJU_OPEN_DATA_SERVICE_KEY: ${{ secrets.JEJU_OPEN_DATA_SERVICE_KEY }}
+          KAKAO_REST_API_KEY: ${{ secrets.KAKAO_REST_API_KEY }}
         run: node scripts/sync-toilets.mjs
       - name: 바뀐 내용이 있으면 커밋
         run: |
-          git add data/toilets.json
+          git add data/toilets.json data/geocode-cache.json
           if git diff --cached --quiet; then
             echo "변경 없음"; exit 0
           fi

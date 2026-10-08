@@ -340,3 +340,6 @@ main { position: relative; flex: 1; min-height: 0; outline: none; }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; scroll-behavior: auto !important; }
 }
+
+.geo-note { margin: 12px 0 0; display: flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 700; color: #8A6B5A; }
+.geo-note .ic { width: 14px; height: 14px; }

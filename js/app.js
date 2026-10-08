@@ -410,6 +410,7 @@ function renderDrawer() {
       <a class="dir-google press" href="${u.google}" target="_blank" rel="noreferrer">${esc(t("detail.google"))}${icon("external")}</a>
     </div></div>
     <div class="mgmt">${icon("building")}<span>${esc(x.org || t("common.unknown"))}</span>${x.tel ? `<a href="tel:${esc(x.tel.replace(/[^\d+]/g, ""))}">${esc(x.tel)}</a>` : ""}</div>
+    ${x.geocoded ? `<p class="geo-note">${icon("info")}${esc(t("detail.geocoded"))}</p>` : ""}
     <div class="d-foot"><span>${icon("calendar")}${esc(t("detail.updated"))} ${esc(x.ref || state.meta?.referenceDate || "-")}</span><button type="button" data-act="report">${esc(t("detail.report"))}</button></div>`;
   el.hidden = false;
   el.scrollTop = 0;

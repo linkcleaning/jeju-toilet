@@ -8,7 +8,7 @@
 // 인증키는 환경변수 JEJU_OPEN_DATA_SERVICE_KEY 로만 받습니다. (앱 코드/저장소에 넣지 마세요)
 // 외부 패키지 없이 Node 20+ 에서 동작합니다.
 
-import { readFile, writeFile, mkdir } from "node:fs/promises";
+import { readFile, writeFile, mkdir, readdir } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -86,13 +86,22 @@ function hoursInfo(raw) {
   return { status: maintenance ? "maintenance" : open24h ? "open24h" : raw ? "limited" : "unknown", open24h: open24h && !maintenance };
 }
 
-function normalize(rawRec, provider) {
+export function cleanAddress(a) {
+  return text(a).replace(/\s+/g, " ").replace(/\s*\([^)]*\)?\s*$/, "").replace(/(서귀포시|제주시)(?=\S)/, "$1 ").trim();
+}
+
+function normalize(rawRec, provider, geo = {}) {
   const r = normalizeObjectKeys(rawRec);
   const name = text(pick(r, "toiletNm", "화장실 명", "화장실명"));
   const road = text(pick(r, "rnAdres", "도로명 주소", "소재지도로명주소", "도로명주소"));
   const lot = text(pick(r, "lnmAdres", "지번 주소", "소재지지번주소", "지번주소"));
-  const lat = Number(text(pick(r, "laCrdnt", "위도 좌표", "위도", "WGS84위도", "위도좌표")));
-  const lng = Number(text(pick(r, "loCrdnt", "경도 좌표", "경도", "WGS84경도", "경도좌표")));
+  let lat = Number(text(pick(r, "laCrdnt", "위도 좌표", "위도", "WGS84위도", "위도좌표")) || NaN);
+  let lng = Number(text(pick(r, "loCrdnt", "경도 좌표", "경도", "WGS84경도", "경도좌표")) || NaN);
+  let geocoded = null;
+  if (!Number.isFinite(lat) || !Number.isFinite(lng)) {
+    const hit = geo[cleanAddress(road)] || geo[cleanAddress(lot)] || geo[`@${name}`];
+    if (hit) { lat = hit.lat; lng = hit.lng; geocoded = hit.src; }
+  }
   if (!name || !Number.isFinite(lat) || !Number.isFinite(lng)) return null;
   if (lat < 33.0 || lat > 34.2 || lng < 125.9 || lng > 127.2) return null;
 
@@ -103,9 +112,9 @@ function normalize(rawRec, provider) {
     + num(pick(r, "maleChildUrinalCnt", "남성 어린이 소변기 수", "남성용어린이용소변기수"))
     + num(pick(r, "femaleChildClosetCnt", "여성 어린이 대변기 수", "여성용어린이용대변기수"));
   const unisex = yesNo(pick(r, "mwmnCmnuseToiletYn", "남녀 공용 화장실 여부", "남녀공용화장실여부"));
-  const hours = text(pick(r, "opnTimeInfo", "개방 시간 정보", "개방시간", "개방시간상세", "개방 시간"));
+  const hours = text(pick(r, "opnTimeInfo", "개방 시간 정보", "개방시간상세", "개방시간", "개방 시간"));
   const id = text(pick(r, "dataCd", "데이터 코드", "관리번호", "번호")) || `${lat.toFixed(5)},${lng.toFixed(5)}`;
-  const type = text(pick(r, "toiletInstlPlacePttnNm", "화장실 설치 장소 유형 명", "화장실 유형", "구분명", "구분"));
+  const type = text(pick(r, "toiletInstlPlacePttnNm", "화장실 설치 장소 유형 명", "화장실 유형", "화장실소유구분명", "구분명", "구분"));
   const dong = text(pick(r, "emdNm", "읍면동 명", "읍면동명"));
   const address = road || lot;
 
@@ -133,6 +142,7 @@ function normalize(rawRec, provider) {
     own: text(pick(r, "toiletPosesnSeNm", "화장실 소유 구분 명", "화장실소유구분")),
     ref: text(pick(r, "regDt", "데이터 기준일", "데이터기준일자")),
     provider,
+    ...(geocoded ? { geocoded } : {}),
   };
 }
 
@@ -181,27 +191,93 @@ async function fromRemoteCsv() {
 }
 
 function guessProvider(file, rows) {
+  const code = text(normalizeObjectKeys(rows[0] || {})[normKey("개방자치단체코드")]);
+  if (code === "6520000") return "서귀포시";
+  if (code === "6510000") return "제주시";
   const sample = JSON.stringify(rows.slice(0, 20));
   if (/서귀포/.test(file) || (/서귀포시/.test(sample) && !/제주시/.test(sample))) return "서귀포시";
   return "제주시";
 }
 
 // ---------- main ----------
+const SOURCE_DIR = path.join(ROOT, "data-source");
+const GEO_CACHE = path.join(ROOT, "data/geocode-cache.json");
+const JEJU_BBOX = (lat, lng) => lat > 33.1 && lat < 33.6 && lng > 126.1 && lng < 127.0;
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+
+// 주소 → 좌표. 카카오 키가 있으면 카카오, 없으면 OpenStreetMap(Nominatim). 결과는 캐시에 저장.
+async function geocodeMissing(rows, cache) {
+  const kakao = process.env.KAKAO_REST_API_KEY?.trim();
+  const jobs = [];
+  for (const raw of rows) {
+    const r = normalizeObjectKeys(raw);
+    const hasXY = Number(text(pick(r, "위도 좌표", "위도", "WGS84위도", "laCrdnt")) || NaN);
+    if (Number.isFinite(hasXY)) continue;
+    const road = cleanAddress(pick(r, "소재지도로명주소", "도로명 주소", "rnAdres"));
+    const lot = cleanAddress(pick(r, "소재지지번주소", "지번 주소", "lnmAdres"));
+    const name = text(pick(r, "화장실명", "화장실 명", "toiletNm"));
+    if ((road && cache[road]?.lat) || (lot && cache[lot]?.lat) || cache[`@${name}`]?.lat) continue;
+    const prev = cache[road || lot];
+    if (prev && prev.tried === (kakao ? "kakao" : "osm")) continue; // 같은 방법으로 이미 실패한 주소는 건너뜀
+    jobs.push({ road, lot, name });
+  }
+  if (!jobs.length) return 0;
+  console.log(`좌표 찾기: ${jobs.length}곳 (${kakao ? "카카오" : "OpenStreetMap"})`);
+  let found = 0;
+  for (const { road, lot, name } of jobs) {
+    let hit = null;
+    for (const q of [road, lot].filter(Boolean)) {
+      try {
+        if (kakao) {
+          const res = await fetch(`https://dapi.kakao.com/v2/local/search/address.json?query=${encodeURIComponent(q)}`, { headers: { Authorization: `KakaoAK ${kakao}` } });
+          const d = (await res.json()).documents?.[0];
+          if (d) hit = { lat: +d.y, lng: +d.x, src: "kakao" };
+        } else {
+          const res = await fetch(`https://nominatim.openstreetmap.org/search?format=jsonv2&countrycodes=kr&limit=1&q=${encodeURIComponent(q)}`, { headers: { "User-Agent": "jeju-toilet-finder/1.0 (github.com/linkcleaning/jeju-toilet)", "Accept-Language": "ko" } });
+          const d = (await res.json())[0];
+          if (d) hit = { lat: +d.lat, lng: +d.lon, src: "osm" };
+          await sleep(process.env.GEO_SLEEP ? +process.env.GEO_SLEEP : 1100);
+        }
+      } catch {}
+      if (hit && !JEJU_BBOX(hit.lat, hit.lng)) hit = null;
+      if (hit) break;
+    }
+    if (!hit && kakao && name) { // 주소로 못 찾으면 장소명으로 (서귀포 범위 안에서만)
+      try {
+        const res = await fetch(`https://dapi.kakao.com/v2/local/search/keyword.json?query=${encodeURIComponent(`서귀포 ${name}`)}&rect=126.1,33.1,127.0,33.45`, { headers: { Authorization: `KakaoAK ${kakao}` } });
+        const d = (await res.json()).documents?.[0];
+        if (d) { hit = { lat: +d.y, lng: +d.x, src: "kakao-place" }; cache[`@${name}`] = { lat: Math.round(hit.lat * 1e6) / 1e6, lng: Math.round(hit.lng * 1e6) / 1e6, src: hit.src }; }
+      } catch {}
+    }
+    const key = road || lot;
+    cache[key] = hit ? { lat: Math.round(hit.lat * 1e6) / 1e6, lng: Math.round(hit.lng * 1e6) / 1e6, src: hit.src } : { tried: kakao ? "kakao" : "osm" };
+    if (hit) found++;
+  }
+  console.log(`좌표 찾음: ${found}/${jobs.length}`);
+  return jobs.length;
+}
+
+async function loadCsvFile(f, cache) {
+  const rows = parseCsv(decode(new Uint8Array(await readFile(f))));
+  const provider = guessProvider(path.basename(f), rows);
+  await geocodeMissing(rows, cache);
+  const geo = Object.fromEntries(Object.entries(cache).filter(([, v]) => v && v.lat));
+  const recs = rows.map((r) => normalize(r, provider, geo)).filter(Boolean);
+  console.log(`${path.basename(f)}: ${rows.length}행 → 지도 표시 가능 ${recs.length}곳 (${provider})`);
+  return { recs, source: { provider, mode: "csv-file", file: path.basename(f), rows: rows.length, mapped: recs.length } };
+}
+
 async function main() {
   const files = process.argv.slice(2);
   const all = [];
   const sources = [];
+  let cache = {};
+  try { cache = JSON.parse(await readFile(GEO_CACHE, "utf8")); } catch {}
 
   if (files.length) {
-    for (const f of files) {
-      const rows = parseCsv(decode(new Uint8Array(await readFile(f))));
-      const provider = guessProvider(path.basename(f), rows);
-      const recs = rows.map((r) => normalize(r, provider)).filter(Boolean);
-      console.log(`${path.basename(f)}: ${rows.length}행 → 지도 표시 가능 ${recs.length}곳 (${provider})`);
-      all.push(...recs);
-      sources.push({ provider, mode: "csv-file", rows: rows.length, mapped: recs.length });
-    }
+    for (const f of files) { const { recs, source } = await loadCsvFile(f, cache); all.push(...recs); sources.push(source); }
   } else {
+    // 1) 제주시: 공식 API (실패 시 공식 CSV)
     const key = process.env.JEJU_OPEN_DATA_SERVICE_KEY?.trim();
     let rows, mode = "official-csv";
     if (key) {
@@ -210,10 +286,16 @@ async function main() {
     }
     if (!rows) rows = await fromRemoteCsv();
     const recs = rows.map((r) => normalize(r, "제주시")).filter(Boolean);
-    console.log(`${mode}: ${rows.length}건 → 지도 표시 가능 ${recs.length}곳`);
+    console.log(`${mode}: ${rows.length}건 → 지도 표시 가능 ${recs.length}곳 (제주시)`);
     all.push(...recs);
     sources.push({ provider: "제주시", mode, rows: rows.length, mapped: recs.length });
+    // 2) data-source 폴더의 CSV (예: 서귀포시)
+    let extra = [];
+    try { extra = (await readdir(SOURCE_DIR)).filter((n) => n.toLowerCase().endsWith(".csv")).sort(); } catch {}
+    for (const n of extra) { const { recs: r2, source } = await loadCsvFile(path.join(SOURCE_DIR, n), cache); all.push(...r2); sources.push(source); }
   }
+  await mkdir(path.dirname(GEO_CACHE), { recursive: true });
+  await writeFile(GEO_CACHE, JSON.stringify(cache, null, 0).replace(/},"/g, '},\n"') + "\n", "utf8");
 
   // 중복 제거: 같은 id 또는 같은 이름+거의 같은 좌표
   const seen = new Set();
