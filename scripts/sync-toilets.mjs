@@ -231,11 +231,13 @@ async function geocodeMissing(rows, cache) {
         if (kakao) {
           const res = await fetch(`https://dapi.kakao.com/v2/local/search/address.json?query=${encodeURIComponent(q)}`, { headers: { Authorization: `KakaoAK ${kakao}` } });
           const d = (await res.json()).documents?.[0];
-          if (d) hit = { lat: +d.y, lng: +d.x, src: "kakao" };
+          // 도로명/지번 주소가 정확히 매칭된 경우만 (REGION 단위는 제외)
+          if (d && /ROAD_ADDR|REGION_ADDR/.test(d.address_type) && (d.road_address || d.address?.main_address_no)) hit = { lat: +d.y, lng: +d.x, src: "kakao" };
         } else {
           const res = await fetch(`https://nominatim.openstreetmap.org/search?format=jsonv2&countrycodes=kr&limit=1&q=${encodeURIComponent(q)}`, { headers: { "User-Agent": "jeju-toilet-finder/1.0 (github.com/linkcleaning/jeju-toilet)", "Accept-Language": "ko" } });
           const d = (await res.json())[0];
-          if (d) hit = { lat: +d.lat, lng: +d.lon, src: "osm" };
+          // 건물·번지 단위로 찾은 것만 사용 (도로·마을 중심점은 위치가 크게 틀어져서 제외)
+          if (d && Number(d.place_rank) >= 29) hit = { lat: +d.lat, lng: +d.lon, src: "osm" };
           await sleep(process.env.GEO_SLEEP ? +process.env.GEO_SLEEP : 1100);
         }
       } catch {}
@@ -250,7 +252,7 @@ async function geocodeMissing(rows, cache) {
       } catch {}
     }
     const key = road || lot;
-    cache[key] = hit ? { lat: Math.round(hit.lat * 1e6) / 1e6, lng: Math.round(hit.lng * 1e6) / 1e6, src: hit.src } : { tried: kakao ? "kakao" : "osm" };
+    cache[key] = hit ? { lat: Math.round(hit.lat * 1e6) / 1e6, lng: Math.round(hit.lng * 1e6) / 1e6, src: hit.src, v: 2 } : { tried: kakao ? "kakao" : "osm", v: 2 };
     if (hit) found++;
   }
   console.log(`좌표 찾음: ${found}/${jobs.length}`);
@@ -273,6 +275,7 @@ async function main() {
   const sources = [];
   let cache = {};
   try { cache = JSON.parse(await readFile(GEO_CACHE, "utf8")); } catch {}
+  for (const [k, v] of Object.entries(cache)) if (!v || v.v !== 2) delete cache[k]; // 예전 방식(정확도 미확인) 결과는 버림
 
   if (files.length) {
     for (const f of files) { const { recs, source } = await loadCsvFile(f, cache); all.push(...recs); sources.push(source); }
