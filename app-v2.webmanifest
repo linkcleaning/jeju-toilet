@@ -2,7 +2,7 @@
   "name": "Ddong · 제주 공중화장실",
   "short_name": "Ddong",
   "description": "제주 공식 공공데이터 기반 공중화장실 찾기",
-  "start_url": "./",
+  "start_url": "./?home=v2",
   "scope": "./",
   "display": "standalone",
   "background_color": "#F2F7F5",
@@ -33,5 +33,6 @@
       "type": "image/png",
       "purpose": "maskable"
     }
-  ]
+  ],
+  "id": "./?app=v2"
 }
