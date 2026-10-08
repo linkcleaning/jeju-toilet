@@ -1,0 +1,32 @@
+name: 화장실 데이터 자동 갱신
+
+on:
+  schedule:
+    - cron: "0 18 * * 0"   # 매주 월요일 03:00 (한국시간)
+  workflow_dispatch: {}     # Actions 탭에서 수동 실행 가능
+
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: 공공데이터 받아서 data/toilets.json 생성
+        env:
+          JEJU_OPEN_DATA_SERVICE_KEY: ${{ secrets.JEJU_OPEN_DATA_SERVICE_KEY }}
+        run: node scripts/sync-toilets.mjs
+      - name: 바뀐 내용이 있으면 커밋
+        run: |
+          if git diff --quiet -- data/toilets.json; then
+            echo "변경 없음"; exit 0
+          fi
+          git config user.name "toilet-data-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add data/toilets.json
+          git commit -m "데이터 자동 갱신 $(date -u +%Y-%m-%d)"
+          git push
