@@ -205,6 +205,7 @@ const GEO_CACHE = path.join(ROOT, "data/geocode-cache.json");
 const JEJU_BBOX = (lat, lng) => lat > 33.1 && lat < 33.6 && lng > 126.1 && lng < 127.0;
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
+let geocodeError = null;
 // 주소 → 좌표. 카카오 키가 있으면 카카오, 없으면 OpenStreetMap(Nominatim). 결과는 캐시에 저장.
 async function geocodeMissing(rows, cache) {
   const kakao = process.env.KAKAO_REST_API_KEY?.trim();
@@ -230,7 +231,9 @@ async function geocodeMissing(rows, cache) {
       try {
         if (kakao) {
           const res = await fetch(`https://dapi.kakao.com/v2/local/search/address.json?query=${encodeURIComponent(q)}`, { headers: { Authorization: `KakaoAK ${kakao}` } });
-          const d = (await res.json()).documents?.[0];
+          const body = await res.json();
+          if (!res.ok) { geocodeError = `kakao ${res.status}: ${body.message || body.msg || JSON.stringify(body).slice(0, 160)}`; throw new Error(geocodeError); }
+          const d = body.documents?.[0];
           // 도로명/지번 주소가 정확히 매칭된 경우만 (REGION 단위는 제외)
           if (d && /ROAD_ADDR|REGION_ADDR/.test(d.address_type) && (d.road_address || d.address?.main_address_no)) hit = { lat: +d.y, lng: +d.x, src: "kakao" };
         } else {
@@ -252,10 +255,12 @@ async function geocodeMissing(rows, cache) {
       } catch {}
     }
     const key = road || lot;
+    if (!hit && geocodeError) continue; // 키/권한 오류면 실패로 기록하지 않음 (다음에 다시 시도)
     cache[key] = hit ? { lat: Math.round(hit.lat * 1e6) / 1e6, lng: Math.round(hit.lng * 1e6) / 1e6, src: hit.src, v: 2 } : { tried: kakao ? "kakao" : "osm", v: 2 };
     if (hit) found++;
   }
   console.log(`좌표 찾음: ${found}/${jobs.length}`);
+  if (geocodeError) console.warn(`카카오 오류: ${geocodeError}`);
   return jobs.length;
 }
 
@@ -319,6 +324,7 @@ async function main() {
       count: toilets.length,
       referenceDate: refDates.at(-1) || null,
       generatedAt: new Date().toISOString(),
+      ...(geocodeError ? { geocodeError } : {}),
     },
     toilets,
   };
