@@ -386,7 +386,7 @@ main { position: relative; flex: 1; min-height: 0; outline: none; }
 .chip-region[aria-pressed="true"] .ic { color: #fff; }
 .app-name { display: inline-block; font: 400 1.32em/1 "DdongLogo", "Fredoka", sans-serif; color: var(--hallabong); letter-spacing: .02em;
   transform: rotate(-5deg) translateY(1px); -webkit-text-stroke: 1px #172A3A; paint-order: stroke fill; text-shadow: 2px 2px 0 #172A3A; margin-left: 2px; }
-.app-name { font-size: 1.18em; letter-spacing: 0; margin-left: 0; }
+.app-name { font-size: 1.3em; letter-spacing: 0; margin-left: 0; }
 .lang .ic { display: none; }
 .lang select { padding-left: 12px; }
 .brand-text h1 { overflow: visible; padding-right: 4px; }
