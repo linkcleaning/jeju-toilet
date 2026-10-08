@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><rect width="512" height="512" rx="0" fill="#172A3A"/><circle cx="256" cy="270" r="190" fill="#FFF4E8" opacity=".08"/><g transform="translate(76 86) scale(3)">
+  <defs>
+    <radialGradient id="gl-body" cx="38%" cy="35%" r="70%"><stop offset="0" stop-color="#FFC27A"/><stop offset=".55" stop-color="#FF9A3D"/><stop offset="1" stop-color="#F0741C"/></radialGradient>
+    <radialGradient id="gl-top" cx="40%" cy="30%" r="80%"><stop offset="0" stop-color="#FFB869"/><stop offset="1" stop-color="#F27E25"/></radialGradient>
+  </defs>
+  <ellipse cx="60" cy="112" rx="30" ry="5" fill="#172A3A" opacity=".12"/>
+  <path d="M60 30c-30 0-44 20-44 42 0 22 18 38 44 38s44-16 44-38c0-22-14-42-44-42Z" fill="url(#gl-body)"/>
+  <path d="M60 14c-10 0-16 8-16 17 0 5 6 8 16 8s16-3 16-8c0-9-6-17-16-17Z" fill="url(#gl-top)"/>
+  <path d="M60 15c0-6 2-9 5-11" stroke="#5B7B3A" stroke-width="3.2" stroke-linecap="round" fill="none"/>
+  <path d="M64 8c8-6 19-5 24 0-6 6-17 7-24 0Z" fill="#4FA35A"/>
+  <path d="M66 8c6-2 13-2 19 0" stroke="#2F7A3F" stroke-width="1.4" fill="none" stroke-linecap="round"/>
+  <g fill="#E8691A" opacity=".35"><circle cx="35" cy="56" r="1.6"/><circle cx="84" cy="52" r="1.6"/><circle cx="90" cy="76" r="1.6"/><circle cx="30" cy="80" r="1.6"/><circle cx="56" cy="44" r="1.4"/></g>
+  <ellipse cx="44" cy="74" rx="5" ry="6.4" fill="#172A3A"/><ellipse cx="76" cy="74" rx="5" ry="6.4" fill="#172A3A"/>
+  <circle cx="45.8" cy="71.6" r="1.9" fill="#fff"/><circle cx="77.8" cy="71.6" r="1.9" fill="#fff"/>
+  <ellipse cx="34" cy="86" rx="7" ry="4" fill="#FF6B6B" opacity=".45"/><ellipse cx="86" cy="86" rx="7" ry="4" fill="#FF6B6B" opacity=".45"/>
+  <path d="M52 86c4 6 12 6 16 0" stroke="#172A3A" stroke-width="3.2" stroke-linecap="round" fill="none"/>
+</g><rect x="318" y="356" width="120" height="74" rx="26" fill="#FF8A34" stroke="#fff" stroke-width="10"/><text x="378" y="408" text-anchor="middle" font-family="Arial Black,Arial" font-weight="900" font-size="46" fill="#fff">WC</text></svg>

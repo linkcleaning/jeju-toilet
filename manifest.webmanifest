@@ -1,0 +1,16 @@
+{
+  "name": "제주 공중화장실 안내",
+  "short_name": "제주 화장실",
+  "description": "제주 공식 공공데이터 기반 공중화장실 찾기",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#F2F7F5",
+  "theme_color": "#172A3A",
+  "lang": "ko",
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
