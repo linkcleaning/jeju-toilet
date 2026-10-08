@@ -1,6 +1,6 @@
 {
-  "name": "제주 공중화장실 안내",
-  "short_name": "제주 화장실",
+  "name": "ddong · 제주 공중화장실",
+  "short_name": "ddong",
   "description": "제주 공식 공공데이터 기반 공중화장실 찾기",
   "start_url": "./",
   "scope": "./",

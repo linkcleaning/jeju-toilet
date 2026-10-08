@@ -1,5 +1,5 @@
 // 제주 공중화장실 — 다국어 사전 (KO / EN / ZH / JA)
-export const LANG_LABELS = { ko: "한국어", en: "English", zh: "简体中文", ja: "日本語" };
+export const LANG_LABELS = { ko: "한국어", en: "EN", zh: "中文", ja: "日本語" };
 export const HTML_LANG = { ko: "ko-KR", en: "en-US", zh: "zh-CN", ja: "ja-JP" };
 
 export const DICT = {

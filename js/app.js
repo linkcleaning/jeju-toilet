@@ -4,7 +4,7 @@ import { icon, mascotSvg, PIN_HTML } from "./icons.js";
 // ---------- 상태 ----------
 const JEJU_CITY_HALL = { lat: 33.4996, lng: 126.5312 };
 const LS = { lang: "jeju-toilet-language", reviews: "jeju-toilet-community-reviews", ratings: "jeju-toilet-ratings" };
-const PAGE = 40;
+const PAGE = 10;
 
 const store = {
   get(k, fb) { try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : fb; } catch { return fb; } },
@@ -185,7 +185,7 @@ function nearestCard(x) {
   return `<section class="nearest" aria-labelledby="nearest-title">
     <div class="glow1"></div><div class="glow2"></div>
     <div class="n-top">
-      <div class="pills"><span class="pill pill-glass"><span class="dot ${state.locStatus}"></span>${esc(locLabel)}</span><span class="pill pill-orange">${esc(t("list.firstChoice"))}</span></div>
+      <div class="pills"><button type="button" class="pill pill-loc press" data-act="locate" aria-label="${esc(t("list.refreshLocation"))}">${icon("refresh")}<span class="dot ${state.locStatus}"></span>${esc(locLabel)}</button><span class="pill pill-orange">${esc(t("list.firstChoice"))}</span></div>
       <button type="button" class="mascot-btn press" data-act="mascot" aria-label="${esc(t("mascot.aria"))}">${mascotSvg()}<span class="badge">${icon("volume")}</span></button>
     </div>
     <p class="eyebrow">${esc(t("list.nearestEyebrow"))}</p>
@@ -204,7 +204,6 @@ function nearestCard(x) {
       <a class="n-go press" href="${u.kakao}" target="_blank" rel="noreferrer">${icon("nav")}${esc(t("list.startNavigation"))}</a>
       <button type="button" class="n-map press" data-showmap="${esc(x.id)}" aria-label="${esc(t("list.viewOnMap"))}" title="${esc(t("list.viewOnMap"))}">${icon("map")}</button>
     </div>
-    <button type="button" class="n-refresh" data-act="locate">${icon("locate")}${esc(t("list.refreshLocation"))}</button>
   </section>`;
 }
 
@@ -215,27 +214,21 @@ function avgFor(id) {
 
 function cardHtml(x, i) {
   const tr = travel(x), st = statusOf(x), avg = avgFor(x.id);
-  const timeLabel = x.open24h ? t("facilities.open24h") : st.open === true ? t("detail.open") : st.open === false ? t("detail.closed") : (x.hours || t("detail.unknownStatus"));
+  const timeLabel = x.open24h ? "24H" : st.open === true ? t("detail.open") : st.open === false ? t("detail.closed") : t("detail.unknownStatus");
+  const fac = [["wheelchair", x.wheelchair, "facilities.wheelchair"], ["baby", x.diaper, "facilities.diaper"], ["bell", x.bell, "facilities.emergency"]]
+    .filter(([, v]) => v === true).map(([ic, , k]) => `<span class="fi-s" title="${esc(t(k))}">${icon(ic)}</span>`).join("");
   return `<button type="button" class="card" data-open="${esc(x.id)}" aria-label="${esc(x.name)} — ${esc(t("list.openDetails"))}">
-    <div class="c-head">
-      <div class="rank ${i === 0 ? "first" : ""}">${String(i + 1).padStart(2, "0")}<i></i></div>
-      <div class="c-body">
-        <div class="c-title"><h3>${esc(x.name)}</h3>${icon("chevron")}</div>
-        <p class="c-addr">${esc(x.address)}</p>
-      </div>
-    </div>
-    <div class="c-meta">
-      <span class="t-green">${icon("pin")}${esc(tr.mode === "walk" ? tr.walk : tr.drive)} · ${esc(tr.dist)}</span>
-      <span class="${st.txt}">${icon("clock")}${esc(timeLabel.length > 22 ? timeLabel.slice(0, 22) + "…" : timeLabel)}</span>
-      ${avg ? `<span class="t-star">${icon("star", "ic star-fill")}${avg.toFixed(1)}</span>` : ""}
-    </div>
-    <div class="c-icons">
-      <span class="fi ${flagCls(x.wheelchair)}" title="${esc(t("facilities.wheelchair"))}">${icon("wheelchair")}</span>
-      <span class="fi ${flagCls(x.diaper)}" title="${esc(t("facilities.diaper"))}">${icon("baby")}</span>
-      <span class="fi ${flagCls(x.bell)}" title="${esc(t("facilities.emergency"))}">${icon("bell")}</span>
-      ${x.olle ? `<span class="tag-olle">${icon("feet")}Olle ${esc(x.olle)}</span>` : ""}
-      ${x.open24h ? `<span class="tag-24">24H</span>` : ""}
-    </div>
+    <span class="rank ${i === 0 ? "first" : ""}">${i + 1}</span>
+    <span class="c-body">
+      <span class="c-name">${esc(x.name)}</span>
+      <span class="c-meta">
+        <span class="t-green">${esc(tr.mode === "walk" ? tr.walk : tr.drive)} · ${esc(tr.dist)}</span>
+        <span class="${st.txt}">${esc(timeLabel)}</span>
+        ${avg ? `<span class="t-star">★${avg.toFixed(1)}</span>` : ""}
+      </span>
+    </span>
+    <span class="c-fac">${fac}</span>
+    ${icon("chevron", "ic c-chev")}
   </button>`;
 }
 
@@ -252,7 +245,7 @@ function renderList() {
   el.innerHTML = `<div class="wrap">
     ${nearestCard(nearest)}
     <div class="list-head">
-      <div><p class="k">JEJU OFFICIAL DATA</p><h2 id="list-title">${esc(t("list.title"))}</h2><p class="sub">${esc(t("list.sortedByDistance"))}</p></div>
+      <h2 id="list-title">${esc(t("list.title"))}</h2>
       <span class="count-pill">${list.length.toLocaleString()} ${esc(t("search.results"))}</span>
     </div>
     ${list.length === 0 ? `<div class="empty">${icon("pin")}<p>${esc(t("search.noResults"))}</p></div>`
@@ -500,7 +493,7 @@ document.addEventListener("click", (e) => {
   switch (b.dataset.act) {
     case "mascot": playMascot(b); break;
     case "locate": locate(); break;
-    case "more": state.shown += PAGE * 2; renderList(); break;
+    case "more": state.shown += 20; renderList(); break;
     case "close": state.selectedId = null; renderDrawer(); if (map) markerById.forEach((m) => m.setIcon(pinIcon(false))); break;
     case "report": toast(t("detail.reportMessage")); break;
   }
