@@ -8,13 +8,18 @@
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="default" />
   <meta name="apple-mobile-web-app-title" content="Ddong" />
-  <link rel="manifest" href="manifest.webmanifest" />
+  <script>
+    // 아이폰·아이패드는 manifest 아이콘을 못 읽는 경우가 있어 apple-touch-icon만 쓰게 함
+    (function () {
+      var ios = /iPhone|iPad|iPod/.test(navigator.userAgent) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+      if (!ios) { var l = document.createElement("link"); l.rel = "manifest"; l.href = "manifest.webmanifest"; document.head.appendChild(l); }
+    })();
+  </script>
   <link rel="apple-touch-icon" href="icons/icon-180.png" />
   <link rel="icon" href="favicon.ico" sizes="any" />
   <link rel="icon" type="image/png" sizes="32x32" href="icons/icon-32.png" />
   <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png" />
   <link rel="icon" href="icons/icon.svg" type="image/svg+xml" />
-  <link rel="apple-touch-icon" href="icons/icon-180.png" />
   <link rel="apple-touch-icon" sizes="152x152" href="icons/icon-152.png" />
   <link rel="apple-touch-icon" sizes="167x167" href="icons/icon-167.png" />
   <link rel="apple-touch-icon" sizes="180x180" href="icons/icon-180.png" />
