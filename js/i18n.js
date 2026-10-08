@@ -19,7 +19,7 @@ export const DICT = {
     data: { loading: "화장실 정보를 불러오는 중…", error: "데이터를 불러오지 못했어요", missing: "data/toilets.json 파일이 아직 없어요. README의 '데이터 넣기'를 확인하세요." },
   },
   en: {
-    app: { title: "Jeju Public Toilets", subtitle: "Find a nearby, accessible restroom fast" },
+    app: { title: "Jeju Toilets", subtitle: "Find a nearby, accessible restroom fast" },
     common: { close: "Close", available: "Available", unavailable: "Not available", unknown: "No data", km: "km", meters: "m", official: "Official Jeju data", more: "Show more" },
     header: { language: "Select language", skip: "Skip to map and search" },
     search: { label: "Search toilets", placeholder: "Search place, toilet, or address", results: "places", noResults: "No toilets match these filters", clear: "Clear search" },
@@ -34,7 +34,7 @@ export const DICT = {
     data: { loading: "Loading toilets…", error: "Couldn't load data", missing: "data/toilets.json is missing. See 'Adding data' in the README." },
   },
   zh: {
-    app: { title: "济州公共厕所指南", subtitle: "快速找到附近无障碍卫生间" },
+    app: { title: "济州公厕", subtitle: "快速找到附近无障碍卫生间" },
     common: { close: "关闭", available: "有", unavailable: "无", unknown: "暂无数据", km: "公里", meters: "米", official: "济州官方数据", more: "查看更多" },
     header: { language: "选择语言", skip: "直接前往地图和搜索" },
     search: { label: "搜索厕所", placeholder: "搜索地点、厕所名称或地址", results: "处", noResults: "没有符合条件的厕所", clear: "清除搜索" },
@@ -49,7 +49,7 @@ export const DICT = {
     data: { loading: "正在加载厕所信息…", error: "无法加载数据", missing: "缺少 data/toilets.json 文件。" },
   },
   ja: {
-    app: { title: "済州 公衆トイレ案内", subtitle: "近くの安心トイレをすばやく検索" },
+    app: { title: "済州トイレ", subtitle: "近くの安心トイレをすばやく検索" },
     common: { close: "閉じる", available: "あり", unavailable: "なし", unknown: "情報なし", km: "km", meters: "m", official: "済州公式データ", more: "もっと見る" },
     header: { language: "言語を選択", skip: "地図と検索へ移動" },
     search: { label: "トイレを検索", placeholder: "場所・トイレ名・住所を検索", results: "件", noResults: "条件に合うトイレがありません", clear: "検索をクリア" },

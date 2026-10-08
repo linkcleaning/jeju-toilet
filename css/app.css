@@ -390,3 +390,61 @@ main { position: relative; flex: 1; min-height: 0; outline: none; }
 .lang .ic { display: none; }
 .lang select { padding-left: 12px; }
 .brand-text h1 { overflow: visible; padding-right: 4px; }
+
+/* SOS */
+.nav-grid { grid-template-columns: repeat(4, 1fr); }
+.nav-btn[data-view="sos"] { color: #C0392B; }
+.nav-btn[data-view="sos"] .ic { color: #D9443A; }
+.nav-btn[data-view="sos"][aria-current="page"] { background: #FDECEA; color: #B3261E; }
+.nav-btn[data-view="sos"][aria-current="page"] .ic { color: #D9443A; }
+.sos-view { overflow-y: auto; padding: 20px 16px calc(112px + var(--safe-b)); }
+.sos-hero { border-radius: 28px; background: linear-gradient(160deg, #2A1416, #172A3A 70%); color: #fff; padding: 22px 18px 18px; box-shadow: 0 18px 40px rgba(23,42,58,.2); }
+.sos-hero .k { margin: 0; font-size: 12px; font-weight: 900; letter-spacing: .18em; color: #FF9C8F; }
+.sos-hero h2 { margin: 6px 0 0; font-size: 26px; font-weight: 900; letter-spacing: -0.04em; }
+.sos-hero > p { margin: 8px 0 0; font-size: 14px; font-weight: 600; line-height: 1.6; color: #DDE8E9; }
+.sos-calls { margin-top: 16px; display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
+.call { display: flex; flex-direction: column; align-items: flex-start; gap: 2px; border-radius: 18px; padding: 12px; min-height: 104px; color: #fff; }
+.call .num { font: 700 28px/1 "Fredoka", sans-serif; }
+.call .lb { margin-top: 6px; font-size: 13px; font-weight: 900; }
+.call .sub { font-size: 10.5px; font-weight: 700; line-height: 1.35; opacity: .85; }
+.c112 { background: #D9443A; box-shadow: 0 10px 22px rgba(217,68,58,.35); }
+.c119 { background: #E8742B; box-shadow: 0 10px 22px rgba(232,116,43,.3); }
+.c1330 { background: #1F8A70; box-shadow: 0 10px 22px rgba(31,138,112,.3); }
+.lang-note { display: flex; gap: 8px; align-items: flex-start; margin: 14px 0 0 !important; font-size: 12.5px !important; color: #CFE3E0 !important; }
+.lang-note .ic { width: 16px; height: 16px; margin-top: 2px; color: #85DDCE; }
+.sos-card { margin-top: 12px; border-radius: 22px; background: #fff; padding: 16px; box-shadow: 0 8px 22px rgba(35,55,62,.07); }
+.sos-card h3 { margin: 0; display: flex; align-items: center; gap: 8px; font-size: 17px; font-weight: 900; letter-spacing: -0.02em; }
+.sos-card h3 .ic { color: #D9443A; }
+.sos-card .d { margin: 6px 0 0; font-size: 13px; font-weight: 600; line-height: 1.6; color: #687980; }
+.sms-btn { margin-top: 12px; display: flex; align-items: center; justify-content: center; gap: 8px; min-height: 50px; border-radius: 14px; background: #172A3A; color: #fff; font-size: 15px; font-weight: 900; }
+.loc-box { margin-top: 12px; border-radius: 14px; background: #F3F7F6; padding: 12px; }
+.loc-box .coord { font: 700 20px/1.2 "Fredoka", sans-serif; color: #172A3A; letter-spacing: .01em; }
+.loc-box .near { margin-top: 6px; font-size: 13px; font-weight: 700; color: #3B5560; line-height: 1.5; }
+.loc-box .near span { display: block; font-size: 11px; color: #7A8A90; }
+.loc-none { margin: 10px 0 0; font-size: 13px; font-weight: 700; color: #A2543B; }
+.loc-actions { margin-top: 10px; display: flex; gap: 8px; }
+.loc-actions button { display: flex; align-items: center; gap: 6px; min-height: 42px; padding: 0 14px; border-radius: 12px; background: #EAF2F0; font-size: 13px; font-weight: 800; color: #24584C; }
+.loc-actions .ic { width: 16px; height: 16px; }
+.sit { margin-top: 10px; display: grid; gap: 8px; }
+.sit-row { border-radius: 14px; padding: 12px; border-left: 4px solid #D9443A; background: #FCF5F4; }
+.sit-row.s { border-left-color: #E8742B; background: #FFF7EF; }
+.sit-row b { display: block; font-size: 14px; font-weight: 900; }
+.sit-row p { margin: 4px 0 0; font-size: 13px; font-weight: 600; line-height: 1.6; color: #5D6E74; }
+.phrases { margin-top: 10px; display: grid; gap: 8px; }
+.phrase { display: flex; flex-direction: column; align-items: flex-start; gap: 2px; width: 100%; text-align: left; border-radius: 14px; border: 1px solid #E2EAE8; background: #FAFCFB; padding: 10px 12px; }
+.phrase .pk { font-size: 17px; font-weight: 900; color: #172A3A; }
+.phrase .pr { font-size: 12px; font-weight: 700; color: #2B8A75; }
+.phrase .pt { font-size: 12.5px; font-weight: 600; color: #6B7B82; }
+.others { margin-top: 10px; display: grid; gap: 8px; }
+.other { display: flex; align-items: center; gap: 12px; border-radius: 14px; background: #F5F8F7; padding: 12px; }
+.other b { font: 700 18px/1 "Fredoka", sans-serif; color: #172A3A; min-width: 92px; }
+.other span { font-size: 12.5px; font-weight: 700; color: #5D6E74; line-height: 1.45; }
+.note { margin: 10px 0 0; font-size: 11px; font-weight: 600; color: #8A9695; }
+.phrase-modal { position: fixed; inset: 0; z-index: 2500; display: grid; place-items: center; padding: 20px; background: rgba(10,20,28,.6); backdrop-filter: blur(4px); }
+.pm-card { width: min(560px, 100%); border-radius: 24px; background: #fff; padding: 28px 22px 20px; text-align: center; animation: drawer-in 220ms var(--ease) both; }
+.pm-ko { margin: 0; font-size: clamp(30px, 9vw, 46px); font-weight: 900; line-height: 1.3; color: #172A3A; letter-spacing: -0.03em; }
+.pm-rom { margin: 10px 0 0; font-size: 16px; font-weight: 700; color: #2B8A75; }
+.pm-tr { margin: 6px 0 0; font-size: 15px; font-weight: 600; color: #6B7B82; }
+.pm-actions { margin-top: 20px; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.pm-actions button { display: flex; align-items: center; justify-content: center; gap: 6px; min-height: 48px; border-radius: 14px; background: #EAF2F0; font-weight: 900; color: #24584C; }
+.pm-actions button:first-child { background: #172A3A; color: #fff; }

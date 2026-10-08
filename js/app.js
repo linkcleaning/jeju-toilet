@@ -1,5 +1,6 @@
 import { DICT, LANG_LABELS, HTML_LANG } from "./i18n.js";
 import { icon, mascotSvg, PIN_HTML } from "./icons.js";
+import { SOS, PHRASES } from "./sos.js";
 
 // ---------- 상태 ----------
 const JEJU_CITY_HALL = { lat: 33.4996, lng: 126.5312 };
@@ -192,8 +193,8 @@ function renderFilters() {
     + FILTERS.map(([k, ic]) => `<button type="button" class="chip" data-filter="${k}" aria-pressed="${state.filter === k}">${icon(ic)}${esc(t(`filters.${k}`))}</button>`).join("");
 }
 function renderNav() {
-  const items = [["list", "house"], ["map", "map"], ["guide", "info"]];
-  $("#bottom-nav").innerHTML = `<div class="nav-grid">${items.map(([k, ic]) => `<button type="button" class="nav-btn" data-view="${k}" ${state.view === k ? 'aria-current="page"' : ""}>${icon(ic)}${esc(t(`nav.${k}`))}</button>`).join("")}</div>`;
+  const items = [["list", "house"], ["map", "map"], ["sos", "siren"], ["guide", "info"]];
+  $("#bottom-nav").innerHTML = `<div class="nav-grid">${items.map(([k, ic]) => `<button type="button" class="nav-btn" data-view="${k}" ${state.view === k ? 'aria-current="page"' : ""}>${icon(ic)}${esc(k === "sos" ? "SOS" : t(`nav.${k}`))}</button>`).join("")}</div>`;
 }
 
 // ---------- 목록 ----------
@@ -462,6 +463,78 @@ function renderGuide() {
     </div></div>`;
 }
 
+// ---------- SOS ----------
+const S = (k) => (SOS[state.lang] || SOS.ko)[k];
+function nearestAny() {
+  let best = null, bd = Infinity;
+  for (const x of state.toilets) { const d = distanceKm(state.user, x); if (d < bd) { bd = d; best = x; } }
+  return best;
+}
+function locationText() {
+  if (state.locStatus !== "found") return null;
+  const n = nearestAny();
+  const coord = `${state.user.lat.toFixed(5)}, ${state.user.lng.toFixed(5)}`;
+  const map = `https://map.kakao.com/link/map/${state.user.lat},${state.user.lng}`;
+  return { coord, near: n ? `${n.name} (${n.address})` : "", map };
+}
+function smsHref() {
+  const loc = locationText();
+  const body = `${S("textMsg")}${loc ? `\n위치/Location: ${loc.coord}${loc.near ? `\n근처/Near: ${loc.near}` : ""}\n${loc.map}` : ""}`;
+  const sep = /iPhone|iPad|iPod|Macintosh/.test(navigator.userAgent) ? "&" : "?";
+  return `sms:112${sep}body=${encodeURIComponent(body)}`;
+}
+function phraseKo(p) { return (p.koByLang && p.koByLang[state.lang]) || p.ko; }
+function phraseRom(p) { return (p.romByLang && p.romByLang[state.lang]) || p.rom; }
+function renderSos() {
+  const loc = locationText();
+  const sec = (title, list, cls) => `<section class="sos-card"><h3>${esc(title)}</h3><div class="sit">${list.map(([h, b]) => `<div class="sit-row ${cls}"><b>${esc(h)}</b><p>${esc(b)}</p></div>`).join("")}</div></section>`;
+  $("#view-sos").innerHTML = `<div class="wrap" style="max-width:720px">
+    <div class="sos-hero">
+      <p class="k">SOS · EMERGENCY</p><h2>${esc(S("title"))}</h2><p>${esc(S("intro"))}</p>
+      <div class="sos-calls">
+        <a class="call c112 press" href="tel:112"><span class="num">112</span><span class="lb">${esc(S("police"))}</span><span class="sub">${esc(S("policeSub"))}</span></a>
+        <a class="call c119 press" href="tel:119"><span class="num">119</span><span class="lb">${esc(S("fire"))}</span><span class="sub">${esc(S("fireSub"))}</span></a>
+        <a class="call c1330 press" href="tel:1330"><span class="num">1330</span><span class="lb">${esc(S("travel"))}</span><span class="sub">${esc(S("travelSub"))}</span></a>
+      </div>
+      <p class="lang-note">${icon("languages")}${esc(S("langNote"))}</p>
+    </div>
+    <section class="sos-card">
+      <h3>${icon("message")}${esc(S("textTitle"))}</h3><p class="d">${esc(S("textBody"))}</p>
+      <a class="sms-btn press" href="${esc(smsHref())}">${icon("send")}${esc(S("textBtn"))}</a>
+    </section>
+    <section class="sos-card">
+      <h3>${icon("pin")}${esc(S("locTitle"))}</h3><p class="d">${esc(S("locBody"))}</p>
+      ${loc ? `<div class="loc-box"><div class="coord">${esc(loc.coord)}</div>${loc.near ? `<div class="near"><span>${esc(S("locNear"))}</span>${esc(loc.near)}</div>` : ""}</div>
+        <div class="loc-actions"><button type="button" class="press" data-act="copyloc">${icon("download")}${esc(S("locCopy"))}</button><button type="button" class="press" data-act="locate">${icon("refresh")}${esc(t("list.currentLocation"))}</button></div>`
+        : `<p class="loc-none">${esc(S("locUnknown"))}</p><div class="loc-actions"><button type="button" class="press" data-act="locate">${icon("refresh")}${esc(t("list.currentLocation"))}</button></div>`}
+    </section>
+    ${sec(S("toiletTitle"), S("toilet"), "t")}
+    ${sec(S("streetTitle"), S("street"), "s")}
+    <section class="sos-card">
+      <h3>${icon("languages")}${esc(S("phrasesTitle"))}</h3><p class="d">${esc(S("phrasesBody"))}</p>
+      <div class="phrases">${PHRASES.map((p, i) => `<button type="button" class="phrase press" data-phrase="${i}"><span class="pk">${esc(phraseKo(p))}</span><span class="pr">${esc(phraseRom(p))}</span>${state.lang !== "ko" ? `<span class="pt">${esc(p[state.lang])}</span>` : ""}</button>`).join("")}</div>
+    </section>
+    <section class="sos-card">
+      <h3>${icon("phone")}${esc(S("otherTitle"))}</h3>
+      <div class="others">${S("other").map(([n, d]) => `<a class="other press" href="tel:${n.replace(/-/g, "")}"><b>${esc(n)}</b><span>${esc(d)}</span></a>`).join("")}</div>
+      <p class="note">${esc(S("note"))}</p>
+    </section>
+  </div>`;
+}
+function speakKo(text) {
+  if (!("speechSynthesis" in window)) return;
+  speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(text); u.lang = "ko-KR"; u.rate = 0.9;
+  const v = speechSynthesis.getVoices().find((v) => v.lang.toLowerCase().startsWith("ko")); if (v) u.voice = v;
+  speechSynthesis.speak(u);
+}
+function openPhrase(i) {
+  const p = PHRASES[i], m = $("#phrase-modal");
+  m.innerHTML = `<div class="pm-card"><p class="pm-ko">${esc(phraseKo(p))}</p><p class="pm-rom">${esc(phraseRom(p))}</p>${state.lang !== "ko" ? `<p class="pm-tr">${esc(p[state.lang])}</p>` : ""}
+    <div class="pm-actions"><button type="button" class="press" data-act="speakphrase" data-i="${i}">${icon("volume")}${esc(S("speak"))}</button><button type="button" class="press" data-act="closephrase">${esc(t("common.close"))}</button></div></div>`;
+  m.hidden = false;
+}
+
 // ---------- 화면 전환 ----------
 function renderMascotFloat() {
   const el = $("#mascot-float");
@@ -475,13 +548,15 @@ function render() {
   $("#view-list").hidden = state.view !== "list";
   $("#view-map").hidden = state.view !== "map";
   $("#view-guide").hidden = state.view !== "guide";
-  $("#search-bar").hidden = state.view === "guide";
+  $("#view-sos").hidden = state.view !== "sos";
+  $("#search-bar").hidden = state.view === "guide" || state.view === "sos";
   renderNav();
   renderFilters();
   renderMascotFloat();
   if (state.view === "list") renderList();
   if (state.view === "map") renderMap();
   if (state.view === "guide") renderGuide();
+  if (state.view === "sos") renderSos();
   renderDrawer();
 }
 
@@ -493,8 +568,10 @@ function setView(v, keepSelection = false) {
 
 // ---------- 이벤트 ----------
 document.addEventListener("click", (e) => {
-  const b = e.target.closest("[data-open],[data-showmap],[data-act],[data-filter],[data-region],[data-view],[data-rate]");
+  if (e.target.id === "phrase-modal") { e.target.hidden = true; return; }
+  const b = e.target.closest("[data-open],[data-showmap],[data-act],[data-filter],[data-region],[data-view],[data-rate],[data-phrase]");
   if (!b) return;
+  if (b.dataset.phrase) { openPhrase(+b.dataset.phrase); return; }
   if (b.dataset.open) { select(b.dataset.open); return; }
   if (b.dataset.showmap) {
     const id = b.dataset.showmap; state.view = "map"; state.selectedId = id; render();
@@ -517,6 +594,9 @@ document.addEventListener("click", (e) => {
     case "more": state.shown += 20; renderList(); break;
     case "close": state.selectedId = null; renderDrawer(); if (map) markerById.forEach((m) => m.setIcon(pinIcon(false))); break;
     case "report": toast(t("detail.reportMessage")); break;
+    case "copyloc": { const l = locationText(); if (l) { const txt = `${l.coord}${l.near ? ` / ${l.near}` : ""}\n${l.map}`; (navigator.clipboard?.writeText(txt) || Promise.reject()).then(() => toast(S("locCopied"))).catch(() => toast(txt)); } break; }
+    case "speakphrase": speakKo(phraseKo(PHRASES[+b.dataset.i])); break;
+    case "closephrase": $("#phrase-modal").hidden = true; break;
   }
 });
 
