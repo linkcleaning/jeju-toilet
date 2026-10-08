@@ -22,11 +22,11 @@ jobs:
         run: node scripts/sync-toilets.mjs
       - name: 바뀐 내용이 있으면 커밋
         run: |
-          if git diff --quiet -- data/toilets.json; then
+          git add data/toilets.json
+          if git diff --cached --quiet; then
             echo "변경 없음"; exit 0
           fi
           git config user.name "toilet-data-bot"
           git config user.email "actions@users.noreply.github.com"
-          git add data/toilets.json
           git commit -m "데이터 자동 갱신 $(date -u +%Y-%m-%d)"
           git push
