@@ -468,3 +468,7 @@ html, body { overflow-x: hidden; -webkit-text-size-adjust: 100%; }
 .mascot-round .badge .ic { width: 13px; height: 13px; }
 .bubble { margin-bottom: 0; border-radius: 16px 16px 4px 16px; }
 .n-top { min-height: 0; }
+/* 화면 전체 확대(두 번 탭·핀치) 방지 — 확대는 지도 안에서만 */
+html, body { touch-action: manipulation; }
+#map, .leaflet-container { touch-action: none; }
+.search-bar, .app-header, .bottom-nav, .chips, .chip-row { touch-action: manipulation; }

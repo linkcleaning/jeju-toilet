@@ -670,6 +670,10 @@ sel.addEventListener("change", () => {
   applyStaticText(); render();
 });
 
+// ---------- 화면 전체 확대 방지 (iOS는 user-scalable=no를 무시하므로 직접 막음) ----------
+["gesturestart", "gesturechange", "gestureend"].forEach((ev) => document.addEventListener(ev, (e) => { if (!e.target.closest || !e.target.closest("#map")) e.preventDefault(); }, { passive: false }));
+// 두 번 탭 확대는 CSS touch-action: manipulation 으로 막음 (버튼 연속 탭은 그대로 동작)
+
 // ---------- 시작 ----------
 fillIcons();
 applyStaticText();
