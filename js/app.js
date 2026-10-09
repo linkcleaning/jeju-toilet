@@ -112,31 +112,39 @@ const dirUrls = (x) => {
 
 // ---------- 소리 (귤랑이) ----------
 // 똥글이 소리: 짧은 "뽁" 효과음 + 음성 "똥!" (ddong.mp3 녹음 파일을 넣으면 그걸 우선 재생)
-let customVoice = null;
-fetch("ddong.mp3", { method: "HEAD" }).then((r) => { if (r.ok) { customVoice = new Audio("ddong.mp3"); customVoice.preload = "auto"; } }).catch(() => {});
-let actx = null;
-function popSound() {
+// 똥글이 소리: "똥똥" 녹음 파일(ddong.mp3). 안드로이드·아이폰 모두 같은 소리.
+// Web Audio로 미리 디코딩해 두면 지연 없이 재생되고, 실패하면 <audio> → 음성합성 순으로 대체.
+let actx = null, ddongBuf = null, ddongEl = null;
+const ddongBytes = fetch("ddong.mp3").then((r) => r.arrayBuffer()).catch(() => null);
+function ensureAudio() {
   try {
     actx = actx || new (window.AudioContext || window.webkitAudioContext)();
     if (actx.state === "suspended") actx.resume();
-    const o = actx.createOscillator(), g = actx.createGain(), now = actx.currentTime;
-    o.type = "sine"; o.frequency.setValueAtTime(520, now); o.frequency.exponentialRampToValueAtTime(140, now + 0.16);
-    g.gain.setValueAtTime(0.0001, now); g.gain.exponentialRampToValueAtTime(0.35, now + 0.01); g.gain.exponentialRampToValueAtTime(0.0001, now + 0.18);
-    o.connect(g).connect(actx.destination); o.start(now); o.stop(now + 0.2);
+    if (!ddongBuf) ddongBytes.then((ab) => ab && !ddongBuf && actx.decodeAudioData(ab.slice(0)).then((b) => { ddongBuf = b; }).catch(() => {}));
   } catch {}
+}
+function playDdong() {
+  ensureAudio();
+  if (actx && ddongBuf) {
+    try { const src = actx.createBufferSource(); src.buffer = ddongBuf; src.connect(actx.destination); src.start(0); return; } catch {}
+  }
+  try {
+    ddongEl = ddongEl || new Audio("ddong.mp3");
+    ddongEl.pause(); ddongEl.currentTime = 0;
+    ddongEl.play().catch(speakDdong);
+  } catch { speakDdong(); }
 }
 function speakDdong() {
   if (!("speechSynthesis" in window)) return;
   speechSynthesis.cancel();
-  const u = new SpeechSynthesisUtterance("똥!");
+  const u = new SpeechSynthesisUtterance("똥똥!");
   u.lang = "ko-KR"; u.pitch = 1.6; u.rate = 1.2;
   const v = speechSynthesis.getVoices().find((v) => v.lang.toLowerCase().startsWith("ko"));
   if (v) u.voice = v;
   speechSynthesis.speak(u);
 }
 function playMascot(el) {
-  if (customVoice) { try { customVoice.pause(); customVoice.currentTime = 0; customVoice.play().catch(() => { popSound(); speakDdong(); }); } catch { popSound(); speakDdong(); } }
-  else { popSound(); speakDdong(); }
+  playDdong();
   $("#live").textContent = t("mascot.sound");
   document.querySelectorAll(".mascot-btn, .mascot-round").forEach((b) => b.classList.add("speaking"));
   document.querySelectorAll(".bubble strong").forEach((s) => (s.textContent = t("mascot.sound")));
@@ -568,6 +576,7 @@ function setView(v, keepSelection = false) {
 }
 
 // ---------- 이벤트 ----------
+["touchstart", "pointerdown"].forEach((ev) => document.addEventListener(ev, ensureAudio, { once: true, passive: true }));
 document.addEventListener("click", (e) => {
   if (e.target.id === "phrase-modal") { e.target.hidden = true; return; }
   const b = e.target.closest("[data-open],[data-showmap],[data-act],[data-filter],[data-region],[data-view],[data-rate],[data-phrase]");

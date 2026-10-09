@@ -1,6 +1,6 @@
 // 서비스워커: 네트워크 우선(항상 최신), 오프라인일 때만 캐시 사용
-const CACHE = "jeju-toilet-v16";
-const SHELL = ["./", "index.html", "css/app.css", "fonts/ddong-logo.woff", "js/app.js", "js/i18n.js", "js/icons.js", "js/sos.js", "data/toilets.json"];
+const CACHE = "jeju-toilet-v17";
+const SHELL = ["./", "index.html", "css/app.css", "fonts/ddong-logo.woff", "js/app.js", "js/i18n.js", "js/icons.js", "js/sos.js", "data/toilets.json", "ddong.mp3"];
 self.addEventListener("install", (e) => { e.waitUntil(caches.open(CACHE).then((c) => c.addAll(SHELL)).then(() => self.skipWaiting())); });
 self.addEventListener("activate", (e) => { e.waitUntil(caches.keys().then((ks) => Promise.all(ks.filter((k) => k !== CACHE).map((k) => caches.delete(k)))).then(() => self.clients.claim())); });
 self.addEventListener("fetch", (e) => {
