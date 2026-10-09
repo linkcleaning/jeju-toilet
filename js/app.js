@@ -111,29 +111,48 @@ const dirUrls = (x) => {
 };
 
 // ---------- 소리 (귤랑이) ----------
-// 똥글이 소리: 짧은 "뽁" 효과음 + 음성 "똥!" (ddong.mp3 녹음 파일을 넣으면 그걸 우선 재생)
-// 똥글이 소리: "똥똥" 녹음 파일(ddong.mp3). 안드로이드·아이폰 모두 같은 소리.
+// 똥글이 소리: 직접 녹음한 "똥!" (ddong.mp3). 안드로이드·아이폰 모두 같은 소리.
 // Web Audio로 미리 디코딩해 두면 지연 없이 재생되고, 실패하면 <audio> → 음성합성 순으로 대체.
-let actx = null, ddongBuf = null, ddongEl = null;
-const ddongBytes = fetch("ddong.mp3?v=3").then((r) => r.arrayBuffer()).catch(() => null);
+let actx = null, ddongBuf = null, ddongEl = null, ddongAB = null;
+const DDONG_URL = "ddong.mp3?v=3";
+fetch(DDONG_URL).then((r) => r.arrayBuffer()).then((ab) => { ddongAB = ab; }).catch(() => {});
+function newContext() {
+  try { if (actx && actx.state !== "closed") actx.close(); } catch {}
+  actx = null; ddongBuf = null;
+  try { actx = new (window.AudioContext || window.webkitAudioContext)(); } catch { actx = null; }
+}
+function decodeIfNeeded() {
+  if (!actx || ddongBuf || !ddongAB) return;
+  actx.decodeAudioData(ddongAB.slice(0)).then((b) => { ddongBuf = b; }).catch(() => {});
+}
+// 터치할 때마다 소리 장치를 깨워 둠 (앱을 나갔다 오면 iOS·안드로이드가 소리 장치를 멈춰 둠)
 function ensureAudio() {
+  if (!actx || actx.state === "closed" || actx.state === "interrupted") newContext();
+  if (actx && actx.state === "suspended") actx.resume().catch(() => {});
+  decodeIfNeeded();
+}
+function playElement() {
   try {
-    actx = actx || new (window.AudioContext || window.webkitAudioContext)();
-    if (actx.state === "suspended") actx.resume();
-    if (!ddongBuf) ddongBytes.then((ab) => ab && !ddongBuf && actx.decodeAudioData(ab.slice(0)).then((b) => { ddongBuf = b; }).catch(() => {}));
-  } catch {}
+    if (!ddongEl) { ddongEl = new Audio(DDONG_URL); ddongEl.preload = "auto"; }
+    ddongEl.pause(); ddongEl.currentTime = 0;
+    const p = ddongEl.play();
+    if (p && p.catch) p.catch(() => { ddongEl = null; speakDdong(); });
+  } catch { ddongEl = null; speakDdong(); }
 }
 function playDdong() {
   ensureAudio();
-  if (actx && ddongBuf) {
+  // 소리 장치가 바로 쓸 수 있는 상태일 때만 Web Audio로, 아니면 <audio>로 확실하게 재생
+  if (actx && actx.state === "running" && ddongBuf) {
     try { const src = actx.createBufferSource(); src.buffer = ddongBuf; src.connect(actx.destination); src.start(0); return; } catch {}
   }
-  try {
-    ddongEl = ddongEl || new Audio("ddong.mp3?v=3");
-    ddongEl.pause(); ddongEl.currentTime = 0;
-    ddongEl.play().catch(speakDdong);
-  } catch { speakDdong(); }
+  playElement();
 }
+// 앱으로 돌아오면 멈춘 소리 장치를 새로 준비
+document.addEventListener("visibilitychange", () => {
+  if (document.visibilityState === "visible") { if (actx && actx.state !== "running") { try { actx.close(); } catch {} actx = null; ddongBuf = null; } ddongEl = null; }
+});
+window.addEventListener("pageshow", (e) => { if (e.persisted) { actx = null; ddongBuf = null; ddongEl = null; } });
+
 function speakDdong() {
   if (!("speechSynthesis" in window)) return;
   speechSynthesis.cancel();
@@ -574,7 +593,7 @@ function setView(v, keepSelection = false) {
 }
 
 // ---------- 이벤트 ----------
-["touchstart", "pointerdown"].forEach((ev) => document.addEventListener(ev, ensureAudio, { once: true, passive: true }));
+["touchstart", "pointerdown"].forEach((ev) => document.addEventListener(ev, ensureAudio, { passive: true }));
 document.addEventListener("click", (e) => {
   if (e.target.id === "phrase-modal") { e.target.hidden = true; return; }
   const b = e.target.closest("[data-open],[data-showmap],[data-act],[data-filter],[data-region],[data-view],[data-rate],[data-phrase]");
