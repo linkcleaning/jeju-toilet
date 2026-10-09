@@ -459,3 +459,12 @@ input, select, textarea { font-size: 16px !important; }
 .r-form input { height: 46px; }
 .lang select { padding: 0 22px 0 10px; height: 40px; }
 html, body { overflow-x: hidden; -webkit-text-size-adjust: 100%; }
+
+/* 똥글이: 모든 화면 오른쪽 가운데 고정 */
+.mascot-float { left: auto; right: 8px; top: 50%; bottom: auto; transform: translateY(-50%); align-items: center; gap: 6px; z-index: 700; }
+.mascot-round { width: 60px; height: 60px; box-shadow: 0 10px 24px rgba(34,46,56,.22), 0 0 0 3px #fff; }
+.mascot-round .mascot-svg { width: 68px; height: 68px; margin-bottom: -2px; }
+.mascot-round .badge { width: 22px; height: 22px; right: -3px; top: -3px; }
+.mascot-round .badge .ic { width: 13px; height: 13px; }
+.bubble { margin-bottom: 0; border-radius: 16px 16px 4px 16px; }
+.n-top { min-height: 0; }

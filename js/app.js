@@ -216,7 +216,6 @@ function nearestCard(x) {
     <div class="glow1"></div><div class="glow2"></div>
     <div class="n-top">
       <div class="pills"><button type="button" class="pill pill-loc press" data-act="locate" aria-label="${esc(t("list.refreshLocation"))}">${icon("refresh")}${esc(t("list.currentLocation"))}</button><span class="pill loc-st ${state.locStatus}"><span class="dot ${state.locStatus}"></span>${esc(state.locStatus === "found" ? t("list.locOk") : state.locStatus === "locating" ? t("list.locWait") : t("list.locFail"))}</span><span class="pill pill-orange">${esc(t("list.firstChoice"))}</span></div>
-      <button type="button" class="mascot-btn press" data-act="mascot" aria-label="${esc(t("mascot.aria"))}">${mascotSvg()}<span class="badge">${icon("volume")}</span></button>
     </div>
     <p class="eyebrow">${esc(t("list.nearestEyebrow"))}</p>
     <h2 id="nearest-title">${esc(t("list.nearestNow"))}</h2>
@@ -547,10 +546,9 @@ function openPhrase(i) {
 // ---------- 화면 전환 ----------
 function renderMascotFloat() {
   const el = $("#mascot-float");
-  el.hidden = state.view !== "map";
-  if (el.hidden) return;
-  el.innerHTML = `<button type="button" class="mascot-round press" data-act="mascot" aria-label="${esc(t("mascot.aria"))}">${mascotSvg()}<span class="badge">${icon("volume")}</span></button>
-    <button type="button" class="bubble" data-act="mascot" aria-label="${esc(t("mascot.aria"))}"><strong>${esc(t("mascot.name"))}</strong><span>${esc(t("mascot.prompt"))}</span></button>`;
+  el.hidden = false; // 모든 화면에서 오른쪽 가운데에 항상 표시
+  el.innerHTML = `<button type="button" class="bubble" data-act="mascot" aria-label="${esc(t("mascot.aria"))}"><strong>${esc(t("mascot.name"))}</strong><span>${esc(t("mascot.prompt"))}</span></button>
+    <button type="button" class="mascot-round press" data-act="mascot" aria-label="${esc(t("mascot.aria"))}">${mascotSvg()}<span class="badge">${icon("volume")}</span></button>`;
 }
 
 function render() {
