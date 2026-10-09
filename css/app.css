@@ -472,3 +472,12 @@ html, body { overflow-x: hidden; -webkit-text-size-adjust: 100%; }
 html, body { touch-action: manipulation; }
 #map, .leaflet-container { touch-action: none; }
 .search-bar, .app-header, .bottom-nav, .chips, .chip-row { touch-action: manipulation; }
+
+/* 똥글이 아래 홈으로 가기 */
+.fab-col { pointer-events: auto; display: flex; flex-direction: column; align-items: center; gap: 10px; }
+.home-fab { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px; width: 54px; height: 54px; border-radius: 18px;
+  background: linear-gradient(160deg, #23405A, #172A3A); color: #fff; box-shadow: 0 10px 22px rgba(23,42,58,.28), 0 0 0 3px #fff; animation: fab-in 240ms var(--ease) both; }
+.home-fab .ic { width: 20px; height: 20px; stroke-width: 2.4; color: #FFB067; }
+.home-fab span { font-size: 10.5px; font-weight: 900; letter-spacing: -0.01em; line-height: 1; }
+.home-fab:active { transform: scale(.94); }
+@keyframes fab-in { from { opacity: 0; transform: translateY(-6px) scale(.9); } to { opacity: 1; transform: none; } }

@@ -566,8 +566,10 @@ function openPhrase(i) {
 function renderMascotFloat() {
   const el = $("#mascot-float");
   el.hidden = false; // 모든 화면에서 오른쪽 가운데에 항상 표시
+  const homeBtn = state.view !== "list"
+    ? `<button type="button" class="home-fab press" data-view="list" aria-label="${esc(t("nav.list"))}">${icon("house")}<span>${esc(t("nav.list"))}</span></button>` : "";
   el.innerHTML = `<button type="button" class="bubble" data-act="mascot" aria-label="${esc(t("mascot.aria"))}"><strong>${esc(t("mascot.name"))}</strong><span>${esc(t("mascot.prompt"))}</span></button>
-    <button type="button" class="mascot-round press" data-act="mascot" aria-label="${esc(t("mascot.aria"))}">${mascotSvg()}<span class="badge">${icon("volume")}</span></button>`;
+    <div class="fab-col"><button type="button" class="mascot-round press" data-act="mascot" aria-label="${esc(t("mascot.aria"))}">${mascotSvg()}<span class="badge">${icon("volume")}</span></button>${homeBtn}</div>`;
 }
 
 function render() {
