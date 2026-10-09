@@ -115,7 +115,7 @@ const dirUrls = (x) => {
 // 똥글이 소리: "똥똥" 녹음 파일(ddong.mp3). 안드로이드·아이폰 모두 같은 소리.
 // Web Audio로 미리 디코딩해 두면 지연 없이 재생되고, 실패하면 <audio> → 음성합성 순으로 대체.
 let actx = null, ddongBuf = null, ddongEl = null;
-const ddongBytes = fetch("ddong.mp3").then((r) => r.arrayBuffer()).catch(() => null);
+const ddongBytes = fetch("ddong.mp3?v=2").then((r) => r.arrayBuffer()).catch(() => null);
 function ensureAudio() {
   try {
     actx = actx || new (window.AudioContext || window.webkitAudioContext)();
@@ -129,7 +129,7 @@ function playDdong() {
     try { const src = actx.createBufferSource(); src.buffer = ddongBuf; src.connect(actx.destination); src.start(0); return; } catch {}
   }
   try {
-    ddongEl = ddongEl || new Audio("ddong.mp3");
+    ddongEl = ddongEl || new Audio("ddong.mp3?v=2");
     ddongEl.pause(); ddongEl.currentTime = 0;
     ddongEl.play().catch(speakDdong);
   } catch { speakDdong(); }
