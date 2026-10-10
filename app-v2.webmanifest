@@ -1,6 +1,6 @@
 {
   "name": "Ddong · 제주 공중화장실",
-  "short_name": "Ddong",
+  "short_name": "Ddong 제주",
   "description": "제주 공식 공공데이터 기반 공중화장실 찾기",
   "start_url": "./?home=v2",
   "scope": "./",
