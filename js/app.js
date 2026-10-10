@@ -110,6 +110,42 @@ const dirUrls = (x) => {
   };
 };
 
+// ---------- 길안내: 휴대폰에서는 지도 앱을 바로 열기 ----------
+// 웹 링크를 새 창으로 열면 그 창이 앱으로 넘어간 뒤 하얀 빈 화면으로 남음.
+// 그래서 휴대폰에서는 카카오맵·네이버지도 앱 주소(kakaomap://, nmap://)로 바로 열고,
+// 앱이 없을 때만 1.6초 뒤 웹 지도로 이동 (같은 창이라 뒤로 가기로 돌아올 수 있음).
+const IS_MOBILE = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+function appUrl(kind, x) {
+  const name = encodeURIComponent(x.name);
+  const from = state.locStatus === "found" ? `sp=${state.user.lat},${state.user.lng}&` : "";
+  if (kind === "kakao") return `kakaomap://route?${from}ep=${x.lat},${x.lng}&by=FOOT`;
+  if (kind === "naver") return `nmap://route/walk?${state.locStatus === "found" ? `slat=${state.user.lat}&slng=${state.user.lng}&sname=${encodeURIComponent("내 위치")}&` : ""}dlat=${x.lat}&dlng=${x.lng}&dname=${name}&appname=${encodeURIComponent(location.hostname || "ddong.jeju")}`;
+  return null;
+}
+function openNav(kind, x, webUrl) {
+  const app = appUrl(kind, x);
+  if (!app) { location.href = webUrl; return; }
+  let left = false;
+  const onHide = () => { if (document.visibilityState === "hidden") left = true; };
+  document.addEventListener("visibilitychange", onHide);
+  window.addEventListener("pagehide", onHide);
+  location.href = app;
+  setTimeout(() => {
+    document.removeEventListener("visibilitychange", onHide);
+    window.removeEventListener("pagehide", onHide);
+    if (!left && document.visibilityState === "visible") location.href = webUrl; // 앱이 없으면 웹 지도로
+  }, 1600);
+}
+document.addEventListener("click", (e) => {
+  const a = e.target.closest("a[data-nav]");
+  if (!a || !IS_MOBILE) return;
+  const x = state.toilets.find((o) => o.id === a.dataset.id);
+  if (!x) return;
+  e.preventDefault();
+  e.stopPropagation();
+  openNav(a.dataset.nav, x, a.href);
+}, true);
+
 // ---------- 소리 (귤랑이) ----------
 // 똥글이 소리: 직접 녹음한 "똥!" (ddong.mp3). 안드로이드·아이폰 모두 같은 소리.
 // Web Audio로 미리 디코딩해 두면 지연 없이 재생되고, 실패하면 <audio> → 음성합성 순으로 대체.
@@ -249,7 +285,7 @@ function nearestCard(x) {
     </button>
     ${state.locStatus === "fallback" ? `<button type="button" class="n-retry press" data-act="locate">${icon("refresh")}${esc(t("list.retryLocation"))}</button>` : ""}
     <div class="n-actions">
-      <a class="n-go press" href="${u.kakao}" target="_blank" rel="noreferrer">${icon("nav")}${esc(t("list.startNavigation"))}</a>
+      <a class="n-go press" href="${u.kakao}" target="_blank" rel="noreferrer" data-nav="kakao" data-id="${esc(x.id)}">${icon("nav")}${esc(t("list.startNavigation"))}</a>
       <button type="button" class="n-map press" data-showmap="${esc(x.id)}" aria-label="${esc(t("list.viewOnMap"))}" title="${esc(t("list.viewOnMap"))}">${icon("map")}</button>
     </div>
   </section>`;
@@ -446,8 +482,8 @@ function renderDrawer() {
       ${reviews.length ? `<div class="r-list">${reviews.slice(0, 3).map((r) => `<div>${icon("message")}<p><b>★ ${r.rating}</b>${esc(r.text)}</p></div>`).join("")}</div>` : ""}
     </div>
     <div class="sec"><h3>${icon("nav")}${esc(t("detail.directions"))}</h3><div class="dirs">
-      <a class="dir-kakao press" href="${u.kakao}" target="_blank" rel="noreferrer">${esc(t("detail.kakao"))}${icon("external")}</a>
-      <a class="dir-naver press" href="${u.naver}" target="_blank" rel="noreferrer">${esc(t("detail.naver"))}${icon("external")}</a>
+      <a class="dir-kakao press" href="${u.kakao}" target="_blank" rel="noreferrer" data-nav="kakao" data-id="${esc(x.id)}">${esc(t("detail.kakao"))}${icon("external")}</a>
+      <a class="dir-naver press" href="${u.naver}" target="_blank" rel="noreferrer" data-nav="naver" data-id="${esc(x.id)}">${esc(t("detail.naver"))}${icon("external")}</a>
       <a class="dir-google press" href="${u.google}" target="_blank" rel="noreferrer">${esc(t("detail.google"))}${icon("external")}</a>
     </div></div>
     <div class="mgmt">${icon("building")}<span>${esc(x.org || t("common.unknown"))}</span>${x.tel ? `<a href="tel:${esc(x.tel.replace(/[^\d+]/g, ""))}">${esc(x.tel)}</a>` : ""}</div>
