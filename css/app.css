@@ -481,3 +481,9 @@ html, body { touch-action: manipulation; }
 .home-fab span { font-size: 10.5px; font-weight: 900; letter-spacing: -0.01em; line-height: 1; }
 .home-fab:active { transform: scale(.94); }
 @keyframes fab-in { from { opacity: 0; transform: translateY(-6px) scale(.9); } to { opacity: 1; transform: none; } }
+
+/* 문의하기 */
+.contact-list { display: grid; gap: 8px; margin-top: 14px; }
+.contact-btn { display: flex; align-items: center; gap: 10px; min-height: 48px; border-radius: 14px; border: 1.5px solid var(--line); background: #fff; padding: 0 14px; font-size: 14px; font-weight: 800; color: var(--basalt); word-break: break-all; }
+.contact-btn .ic { width: 18px; height: 18px; flex-shrink: 0; }
+.contact-btn.kakao { background: #FEE500; border-color: #F2D900; color: #191919; }
